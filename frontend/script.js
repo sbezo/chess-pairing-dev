@@ -118,23 +118,10 @@ function lockAndPairing() {
     // Create tabs for all rounds
     for (let i = 1; i <= (rounds.length - 1); i++) {
         createRoundTab(i);
-}
-}
-
-function generateBergerPairings(players) {
-    const n = players.length;
-    const pairings = [];
-    for (let round = 1; round < n; round++) {
-        const roundPairings = [];
-        for (let i = 0; i < n / 2; i++) {
-            const player1 = players[i];
-            const player2 = players[n - 1 - i];
-            roundPairings.push([player1, player2]);
-        }
-        players.splice(1, 0, players.pop());
-        pairings.push(roundPairings);
     }
-    return pairings;
+
+    // Make round 1 active tab
+    openRound(1);
 }
 
 function createRoundTab() {
@@ -166,12 +153,12 @@ function createRoundTab() {
             </tr>
         </thead>
         <tbody>
-            ${rounds[roundNumber - 1].map(pair => `
+            ${rounds[roundNumber - 1].map((pair, index) => `
                 <tr>
                     <td>${pair[0].name}</td>
                     <td>${pair[1].name}</td>
                     <td>
-                        <select>
+                        <select onchange="updateResult(${roundNumber - 1}, ${index}, this.value)">
                             <option value="" selected> - </option>
                             <option value="1-0">1-0</option>
                             <option value="0-1">0-1</option>
@@ -189,6 +176,12 @@ function createRoundTab() {
     currentRound++; // Increment the current round after creating the tab and content
 }
 
+function updateResult(roundIndex, pairIndex, result) {
+    const [player1Score, player2Score] = result.split('-').map(Number);
+    rounds[roundIndex][pairIndex].result = { player1Score, player2Score };
+    console.log('Updated rounds:', rounds);
+}
+
 function nextRound() {
 // Save results for the current round
 const roundContent = document.getElementById(`round${currentRound - 1}`);
@@ -202,7 +195,6 @@ results.forEach((select, index) => {
 
 createRoundTab();
 console.log('rounds:', rounds);
-
 }
 
 function openRound(roundNumber) {
@@ -215,6 +207,7 @@ function openRound(roundNumber) {
     console.log(document.querySelector(`.round-tab:nth-child(${roundNumber})`).classList.add("active"))
     document.querySelector(`.round-tab:nth-child(${roundNumber})`).classList.add("active");
     document.getElementById(`round${roundNumber}`).classList.add("active");
+    console.log(rounds)
 }
 
 function updateTable() {

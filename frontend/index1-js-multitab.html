@@ -57,6 +57,31 @@
         opacity: 0.5;
         pointer-events: none;
         }
+        .round-container {
+            margin-top: 20px;
+        }
+        .round-tab {
+            padding: 5px 10px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background-color: #f9f9f9;
+            margin-right: 5px;
+            display: inline-block;
+        }
+        .round-tab.active {
+            background-color: white;
+            border-top: 2px solid #000;
+        }
+        .round-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-top: -1px;
+        }
+        .round-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -102,7 +127,12 @@
     <!-- Tab 2: Pairing -->
     <div id="tab2" class="tab-content">
         <h2>Pairing</h2>
-        <p>Pairing logic will be implemented here.</p>
+        <div id="roundTabs" class="round-container">
+            <!-- Round tabs will be added here -->
+        </div>
+        <div id="roundContents">
+            <!-- Round contents will be added here -->
+        </div>
     </div>
 
     <!-- Tab 3: Standing -->
@@ -113,6 +143,8 @@
 
     <script>
         let players = []; // Store input data
+        let rounds = []; // Store rounds data
+        let currentRound = 1; //Store current round number
 
         function addToTable() {
             let name = document.getElementById("name").value;
@@ -219,8 +251,86 @@
         
             // Optionally, add a visual indication that the table is locked
             document.getElementById("dataTable").classList.add('locked');
-        
-            console.log("Table locked and pairing started.");
+            
+            // Add a "Bye" player if the number of players is odd
+            if (players.length % 2 !== 0) {
+                players.push({ name: "Bye", Elo: 1400 });
+            }
+            updateTable();
+
+            // Generate pairings
+            rounds = generateBergerPairings(players);
+            createRoundTab();
+        }
+
+        function generateBergerPairings(players) {
+            const n = players.length;
+            const pairings = [];
+            for (let round = 1; round < n; round++) {
+                const roundPairings = [];
+                for (let i = 0; i < n / 2; i++) {
+                    const player1 = players[i];
+                    const player2 = players[n - 1 - i];
+                    roundPairings.push([player1, player2]);
+                }
+                players.splice(1, 0, players.pop());
+                pairings.push(roundPairings);
+            }
+            return pairings;
+        }
+
+        function createRoundTab() {
+            console.log('rounds:', rounds);
+
+            const roundTabs = document.getElementById("roundTabs");
+            const roundContents = document.getElementById("roundContents");
+
+            // Create round tab
+            const roundTab = document.createElement("div");
+            roundTab.className = "round-tab";
+            roundTab.innerText = `Round ${currentRound}`;
+            roundTab.onclick = () => openRound(currentRound);
+            roundTabs.appendChild(roundTab);
+
+            // Create round content
+            const roundContent = document.createElement("div");
+            roundContent.className = "round-content";
+            roundContent.id = `round${currentRound}`;
+            roundContent.innerHTML = `<h3>Round ${currentRound}</h3>`;
+            const table = document.createElement("table");
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Player 1</th>
+                        <th>Player 2</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rounds[currentRound - 1].map(pair => `
+                        <tr>
+                            <td>${pair[0].name}</td>
+                            <td>${pair[1].name}</td>
+                            <td contenteditable="true"></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            roundContent.appendChild(table);
+            roundContents.appendChild(roundContent);
+
+            openRound(currentRound);
+        }
+
+        function openRound(roundNumber) {
+            const roundTabs = document.querySelectorAll(".round-tab");
+            const roundContents = document.querySelectorAll(".round-content");
+
+            roundTabs.forEach(tab => tab.classList.remove("active"));
+            roundContents.forEach(content => content.classList.remove("active"));
+
+            document.querySelector(`.round-tab:nth-child(${roundNumber})`).classList.add("active");
+            document.getElementById(`round${roundNumber}`).classList.add("active");
         }
 
         function updateTable() {

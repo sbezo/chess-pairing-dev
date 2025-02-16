@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess tournament</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        .tab-container {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background-color: #f9f9f9;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #ddd;
+        }
+        .tab-content {
+            margin-top: 20px;
+        }
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="tab-container">
+        <div class="tab" :class="{ active: activeTab === 'tab1' }" @click="openTab('tab1')">Tournament</div>
+        <div class="tab" :class="{ active: activeTab === 'tab2' }" @click="openTab('tab2')">Add Player to Table</div>
+        <div class="tab" :class="{ active: activeTab === 'tab3' }" @click="openTab('tab3')">Pairing</div>
+        <div class="tab" :class="{ active: activeTab === 'tab4' }" @click="openTab('tab4')">Statistics</div>
+    </div>
+
+    <div class="tab-content">
+        <div v-show="activeTab === 'tab1'">
+            <h3>Tournament</h3>
+            <p>Content for Creating tournament</p>
+        </div>
+        <div v-show="activeTab === 'tab2'">
+            <h3>Add Player to Table</h3>
+            <input type="text" v-model="newName" placeholder="Enter Name">
+            <input type="number" v-model="newElo" placeholder="Enter Elo">
+            <button @click="addRow">Add to Table</button>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Elo</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row, index) in rows" :key="index">
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.Elo }}</td>
+                        <td>
+                            <button @click="removeRow(index)">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div v-show="activeTab === 'tab3'">
+            <h3>Pairing</h3>
+            <p>Content for Pairing Tab</p>
+        </div>
+
+        <div v-show="activeTab === 'tab4'">
+            <h3>Statistics</h3>
+            <p>Content for Statistics Tab</p>
+        </div>
+    </div>
+</div>
+
+<script>
+const app = Vue.createApp({
+    data() {
+        return {
+            newName: '',
+            newElo: '',
+            rows: [],
+            activeTab: 'tab1'
+        };
+    },
+    methods: {
+        addRow() {
+            if (this.newElo == '') {this.newElo = 1400};
+            if (this.newName && this.newElo !== '') {
+                this.rows.push({ name: this.newName, Elo: this.newElo });
+                this.newName = '';
+                this.newElo = '';
+            }
+        },
+        removeRow(index) {
+            this.rows.splice(index, 1);
+        },
+        openTab(tab) {
+            this.activeTab = tab;
+        }
+    }
+});
+
+app.mount('#app');
+</script>
+
+</body>
+</html>

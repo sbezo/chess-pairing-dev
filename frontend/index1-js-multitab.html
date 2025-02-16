@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Tab Web Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .tab-container {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background-color: #f9f9f9;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: white;
+            border-top: 2px solid #000;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-top: -1px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tabs -->
+    <div class="tab-container">
+        <div class="tab active" onclick="openTab('tab1')">Add Player to Table</div>
+        <div class="tab" onclick="openTab('tab2')">Pairing</div>
+        <div class="tab" onclick="openTab('tab3')">Standing</div>
+    </div>
+
+    <!-- Tab 1: Add Player to Table -->
+    <div id="tab1" class="tab-content active">
+        <h2>Add Player to Table</h2>
+        <input type="text" id="name" placeholder="Enter name" required>
+        <input type="number" id="score" placeholder="Enter score" required>
+        <button onclick="addToTable()">Add</button>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tab 2: Pairing -->
+    <div id="tab2" class="tab-content">
+        <h2>Pairing</h2>
+        <p>Pairing logic will be implemented here.</p>
+    </div>
+
+    <!-- Tab 3: Standing -->
+    <div id="tab3" class="tab-content">
+        <h2>Standing</h2>
+        <p>Standing logic will be implemented here.</p>
+    </div>
+
+    <script>
+        let players = []; // Store input data
+
+        function addToTable() {
+            let name = document.getElementById("name").value;
+            let score = document.getElementById("score").value;
+
+            if (name && score) {
+                let table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+                let newRow = table.insertRow();
+
+                let nameCell = newRow.insertCell(0);
+                let scoreCell = newRow.insertCell(1);
+
+                nameCell.textContent = name;
+                scoreCell.textContent = score;
+
+                // Store in variable
+                players.push({ name: name, score: Number(score) });
+
+                // Clear input fields
+                document.getElementById("name").value = "";
+                document.getElementById("score").value = "";
+
+                console.log(players); // Debugging
+            } else {
+                alert("Please enter both name and score.");
+            }
+        }
+
+        function openTab(tabId) {
+            let tabs = document.querySelectorAll('.tab-content');
+            let tabButtons = document.querySelectorAll('.tab');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabButtons.forEach(tab => tab.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab-container .tab[onclick="openTab('${tabId}')"]`).classList.add('active');
+        }
+    </script>
+
+</body>
+</html>

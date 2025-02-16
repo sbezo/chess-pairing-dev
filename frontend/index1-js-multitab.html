@@ -47,13 +47,23 @@
         th {
             background-color: #f2f2f2;
         }
+        .button-container {
+            float: right;
+        }
+        .button-container button {
+            margin-left: 10px;
+        }
+        .locked {
+        opacity: 0.5;
+        pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
     <!-- Tabs -->
     <div class="tab-container">
-        <div class="tab active" onclick="openTab('tab1')">Add Player to Table</div>
+        <div class="tab active" onclick="openTab('tab1')">Players</div>
         <div class="tab" onclick="openTab('tab2')">Pairing</div>
         <div class="tab" onclick="openTab('tab3')">Standing</div>
     </div>
@@ -64,6 +74,16 @@
         <input type="text" id="name" placeholder="Enter name" required>
         <input type="number" id="Elo" placeholder="Enter Elo" required>
         <button onclick="addToTable()">Add</button>
+        <div class="button-container">
+            <button onclick="sortPlayers()">Sort Players</button>
+            <button onclick="randomizePlayers()">Randomize Players</button>
+            <button onclick="clearTable()">Clear Table</button>
+            <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="importFromCSV(event)">
+            <button onclick="document.getElementById('csvFileInput').click()">Import from CSV</button>
+            <button onclick="exportToCSV()">Export to CSV</button>
+            <button onclick="lockAndPairing()">Lock & Start Pairing</button>
+
+        </div>
 
         <table id="dataTable">
             <thead>
@@ -97,7 +117,9 @@
         function addToTable() {
             let name = document.getElementById("name").value;
             let Elo = document.getElementById("Elo").value;
-
+            if (!Elo) {
+                Elo = 1400; // Default Elo value
+            }
             if (name && Elo) {
                 let table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
                 let newRow = table.insertRow();
@@ -130,6 +152,92 @@
             row.parentNode.removeChild(row); // Remove row from table
 
             console.log(players); // Debugging
+        }
+
+        function sortPlayers() {
+            players.sort((a, b) => b.Elo - a.Elo); // Sort players by Elo in descending order
+            updateTable();
+        }
+
+        function randomizePlayers() {
+            for (let i = players.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [players[i], players[j]] = [players[j], players[i]];
+            }
+            updateTable();
+        }
+
+        function clearTable() {
+            let table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+            table.innerHTML = ""; // Clear all rows
+            players = []; // Clear players array
+            console.log(players); // Debugging
+        }
+
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Name,Elo\n";
+            players.forEach(player => {
+                csvContent += `${player.name},${player.Elo}\n`;
+            });
+        
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "players.csv");
+            document.body.appendChild(link); // Required for FF
+        
+            link.click();
+            document.body.removeChild(link); // Clean up
+        }
+
+        function importFromCSV(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const rows = text.split('\n').slice(1); // Skip header row
+                rows.forEach(row => {
+                    const [name, Elo] = row.split(',');
+                    if (name && Elo) {
+                        players.push({ name: name.trim(), Elo: Number(Elo.trim()) });
+                    }
+                });
+                updateTable();
+            };
+            reader.readAsText(file);
+        }
+
+        function lockAndPairing() {
+            // Disable input fields
+            document.getElementById("name").disabled = true;
+            document.getElementById("Elo").disabled = true;
+
+            // Disable buttons
+            document.querySelectorAll('.button-container button').forEach(button => {
+                button.disabled = true;
+            });
+        
+            // Optionally, add a visual indication that the table is locked
+            document.getElementById("dataTable").classList.add('locked');
+        
+            console.log("Table locked and pairing started.");
+        }
+
+        function updateTable() {
+            let table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+            table.innerHTML = ""; // Clear existing rows
+
+            players.forEach(player => {
+                let newRow = table.insertRow();
+
+                let nameCell = newRow.insertCell(0);
+                let EloCell = newRow.insertCell(1);
+                let actionCell = newRow.insertCell(2);
+
+                nameCell.textContent = player.name;
+                EloCell.textContent = player.Elo;
+                actionCell.innerHTML = '<button onclick="deleteRow(this)">Delete</button>';
+            });
         }
 
         function openTab(tabId) {

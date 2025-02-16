@@ -133,6 +133,7 @@
         <div id="roundContents">
             <!-- Round contents will be added here -->
         </div>
+        <button onclick="nextRound()">Next Round</button>
     </div>
 
     <!-- Tab 3: Standing -->
@@ -171,7 +172,6 @@
                 document.getElementById("name").value = "";
                 document.getElementById("Elo").value = "";
 
-                console.log(players); // Debugging
             } else {
                 alert("Please enter both name and Elo.");
             }
@@ -183,7 +183,6 @@
             players.splice(rowIndex, 1); // Remove from players array
             row.parentNode.removeChild(row); // Remove row from table
 
-            console.log(players); // Debugging
         }
 
         function sortPlayers() {
@@ -203,7 +202,6 @@
             let table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
             table.innerHTML = ""; // Clear all rows
             players = []; // Clear players array
-            console.log(players); // Debugging
         }
 
         function exportToCSV() {
@@ -280,23 +278,24 @@
         }
 
         function createRoundTab() {
-            console.log('rounds:', rounds);
-
             const roundTabs = document.getElementById("roundTabs");
             const roundContents = document.getElementById("roundContents");
+
+            // Capture the current round number
+            const roundNumber = currentRound;
 
             // Create round tab
             const roundTab = document.createElement("div");
             roundTab.className = "round-tab";
-            roundTab.innerText = `Round ${currentRound}`;
-            roundTab.onclick = () => openRound(currentRound);
+            roundTab.innerText = `Round ${roundNumber}`;
+            roundTab.onclick = () => openRound(roundNumber); // Use captured round number
             roundTabs.appendChild(roundTab);
 
             // Create round content
             const roundContent = document.createElement("div");
             roundContent.className = "round-content";
-            roundContent.id = `round${currentRound}`;
-            roundContent.innerHTML = `<h3>Round ${currentRound}</h3>`;
+            roundContent.id = `round${roundNumber}`;
+            roundContent.innerHTML = `<h3>Round ${roundNumber}</h3>`;
             const table = document.createElement("table");
             table.innerHTML = `
                 <thead>
@@ -307,20 +306,44 @@
                     </tr>
                 </thead>
                 <tbody>
-                    ${rounds[currentRound - 1].map(pair => `
+                    ${rounds[roundNumber - 1].map(pair => `
                         <tr>
                             <td>${pair[0].name}</td>
                             <td>${pair[1].name}</td>
-                            <td contenteditable="true"></td>
+                            <td>
+                                <select>
+                                    <option value="" selected> - </option>
+                                    <option value="1-0">1-0</option>
+                                    <option value="0-1">0-1</option>
+                                    <option value="0.5-0.5">Draw</option>
+                                </select>
+                            </td>
                         </tr>
                     `).join('')}
                 </tbody>
             `;
             roundContent.appendChild(table);
             roundContents.appendChild(roundContent);
-
-            openRound(currentRound);
+            
+            openRound(roundNumber);
+            currentRound++; // Increment the current round after creating the tab and content
         }
+
+        function nextRound() {
+        // Save results for the current round
+        const roundContent = document.getElementById(`round${currentRound - 1}`);
+        const results = roundContent.querySelectorAll('select');
+        results.forEach((select, index) => {
+            const result = select.value;
+            const [player1Score, player2Score] = result.split('-').map(Number);
+            rounds[currentRound - 2][index].result = { player1Score, player2Score };
+        });
+
+
+        createRoundTab();
+        console.log('rounds:', rounds);
+
+    }
 
         function openRound(roundNumber) {
             const roundTabs = document.querySelectorAll(".round-tab");
@@ -329,6 +352,7 @@
             roundTabs.forEach(tab => tab.classList.remove("active"));
             roundContents.forEach(content => content.classList.remove("active"));
 
+            console.log(document.querySelector(`.round-tab:nth-child(${roundNumber})`).classList.add("active"))
             document.querySelector(`.round-tab:nth-child(${roundNumber})`).classList.add("active");
             document.getElementById(`round${roundNumber}`).classList.add("active");
         }

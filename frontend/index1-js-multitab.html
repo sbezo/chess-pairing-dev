@@ -133,7 +133,6 @@
         <div id="roundContents">
             <!-- Round contents will be added here -->
         </div>
-        <button onclick="nextRound()">Next Round</button>
     </div>
 
     <!-- Tab 3: Standing -->
@@ -259,6 +258,11 @@
             // Generate pairings
             rounds = generateBergerPairings(players);
             createRoundTab();
+
+            // Create tabs for all rounds
+            for (let i = 1; i <= (rounds.length - 1); i++) {
+                createRoundTab(i);
+        }
         }
 
         function generateBergerPairings(players) {

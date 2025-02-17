@@ -11,5 +11,8 @@ function generateBergerPairings(players) {
         players.splice(1, 0, players.pop());
         pairings.push(roundPairings);
     }
+    console.log('pairing', pairings);
+    console.log('players', players);
     return pairings;
+
 }

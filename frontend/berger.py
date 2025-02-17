@@ -1,6 +1,7 @@
 
-def berger(n):
+def berger(players):
     pairing = []
+    n = len(players)
     rounds = n - 1
     c = 1
 
@@ -10,7 +11,7 @@ def berger(n):
         for j in range(n//2): #iterating through the tables (pairs of players)
             if c == n: #if c already is equal to n, then reset counter c to 1
                 c = 1
-            pairing[-1].append([c, 0]) #do posledneho listu
+            pairing[-1].append([players[c - 1], 0]) #do posledneho listu
             c += 1
 
     # right player
@@ -24,12 +25,15 @@ def berger(n):
     # tune first row
     for i in range(rounds): #iterating through the rounds
         if i % 2 == 0: #if i is even
-            pairing[i][0][1] = n
+            pairing[i][0][1] = players[n-1]
         else:
-            pairing[i][0][0] = n
+            pairing[i][0][0] = players[n-1]
     return(pairing)
 
-pairing = berger(10)
+#------------------------------------------------------------
+players_list = [{'name': '1', 'elo': 1400}, {'name': '2', 'elo': 1300}, {'3': 'juraj', 'elo': 1600}, {'4': 'alena', 'elo': 1700}]
+
+pairing = berger(players_list)
 for i in pairing:
     print(i)
 

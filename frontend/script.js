@@ -179,7 +179,6 @@ function createRoundTab() {
 function updateResult(roundIndex, pairIndex, result) {
     const [player1Score, player2Score] = result.split('-').map(Number);
     rounds[roundIndex][pairIndex].result = { player1Score, player2Score };
-    console.log('Updated rounds:', rounds);
 }
 
 function nextRound() {
@@ -194,7 +193,6 @@ results.forEach((select, index) => {
 
 
 createRoundTab();
-console.log('rounds:', rounds);
 }
 
 function openRound(roundNumber) {
@@ -207,7 +205,6 @@ function openRound(roundNumber) {
     console.log(document.querySelector(`.round-tab:nth-child(${roundNumber})`).classList.add("active"))
     document.querySelector(`.round-tab:nth-child(${roundNumber})`).classList.add("active");
     document.getElementById(`round${roundNumber}`).classList.add("active");
-    console.log(rounds)
 }
 
 function updateTable() {

@@ -122,6 +122,9 @@ function lockAndPairing() {
 
     // Make round 1 active tab
     openRound(1);
+
+    // Generate empty cross table
+    generateCrossTable();
 }
 
 function createRoundTab() {

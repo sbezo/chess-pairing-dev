@@ -75,3 +75,26 @@ pointer-events: none;
 .round-content.active {
     display: block;
 }
+
+/* Apply fixed width ONLY to the table inside tab3 */
+#tab3 table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px auto;
+    table-layout: fixed; /* Ensures uniform column width */
+}
+
+#tab3 th, #tab3 td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+    width: 100px; /* Set a fixed width for all columns */
+}
+
+#tab3 th {
+    background-color: #f4f4f4;
+}
+
+#tab3 td.empty {
+    background-color: #ddd;
+}

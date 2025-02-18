@@ -1,0 +1,475 @@
+rounds:
+[kolo][sachovnica][{name, Elo}, {name, Elo}, ].result
+
+
+
+[
+  [
+    [
+      {
+        "name": "Magnus",
+        "Elo": 2833
+      },
+      {
+        "name": "Anand",
+        "Elo": 2750
+      }
+    ],
+    [
+      {
+        "name": "Fabiano",
+        "Elo": 2803
+      },
+      {
+        "name": "Ian",
+        "Elo": 2754
+      }
+    ],
+    [
+      {
+        "name": "Hikaru",
+        "Elo": 2802
+      },
+      {
+        "name": "Yi",
+        "Elo": 2755
+      }
+    ],
+    [
+      {
+        "name": "Arjun",
+        "Elo": 2801
+      },
+      {
+        "name": "Alireza",
+        "Elo": 2760
+      }
+    ],
+    [
+      {
+        "name": "Gukesh",
+        "Elo": 2777
+      },
+      {
+        "name": "Nodirbek",
+        "Elo": 2766
+      }
+    ]
+  ],
+  [
+    [
+      {
+        "name": "Anand",
+        "Elo": 2750
+      },
+      {
+        "name": "Nodirbek",
+        "Elo": 2766
+      }
+    ],
+    [
+      {
+        "name": "Alireza",
+        "Elo": 2760
+      },
+      {
+        "name": "Gukesh",
+        "Elo": 2777
+      }
+    ],
+    [
+      {
+        "name": "Yi",
+        "Elo": 2755
+      },
+      {
+        "name": "Arjun",
+        "Elo": 2801
+      }
+    ],
+    [
+      {
+        "name": "Ian",
+        "Elo": 2754
+      },
+      {
+        "name": "Hikaru",
+        "Elo": 2802
+      }
+    ],
+    [
+      {
+        "name": "Magnus",
+        "Elo": 2833
+      },
+      {
+        "name": "Fabiano",
+        "Elo": 2803
+      }
+    ]
+  ],
+  [
+    [
+      {
+        "name": "Fabiano",
+        "Elo": 2803
+      },
+      {
+        "name": "Anand",
+        "Elo": 2750
+      }
+    ],
+    [
+      {
+        "name": "Hikaru",
+        "Elo": 2802
+      },
+      {
+        "name": "Magnus",
+        "Elo": 2833
+      }
+    ],
+    [
+      {
+        "name": "Arjun",
+        "Elo": 2801
+      },
+      {
+        "name": "Ian",
+        "Elo": 2754
+      }
+    ],
+    [
+      {
+        "name": "Gukesh",
+        "Elo": 2777
+      },
+      {
+        "name": "Yi",
+        "Elo": 2755
+      }
+    ],
+    [
+      {
+        "name": "Nodirbek",
+        "Elo": 2766
+      },
+      {
+        "name": "Alireza",
+        "Elo": 2760
+      }
+    ]
+  ],
+  [
+    [
+      {
+        "name": "Anand",
+        "Elo": 2750
+      },
+      {
+        "name": "Alireza",
+        "Elo": 2760
+      }
+    ],
+    [
+      {
+        "name": "Yi",
+        "Elo": 2755
+      },
+      {
+        "name": "Nodirbek",
+        "Elo": 2766
+      }
+    ],
+    [
+      {
+        "name": "Ian",
+        "Elo": 2754
+      },
+      {
+        "name": "Gukesh",
+        "Elo": 2777
+      }
+    ],
+    [
+      {
+        "name": "Magnus",
+        "Elo": 2833
+      },
+      {
+        "name": "Arjun",
+        "Elo": 2801
+      }
+    ],
+    [
+      {
+        "name": "Fabiano",
+        "Elo": 2803
+      },
+      {
+        "name": "Hikaru",
+        "Elo": 2802
+      }
+    ]
+  ],
+  [
+    [
+      {
+        "name": "Hikaru",
+        "Elo": 2802
+      },
+      {
+        "name": "Anand",
+        "Elo": 2750
+      }
+    ],
+    [
+      {
+        "name": "Arjun",
+        "Elo": 2801
+      },
+      {
+        "name": "Fabiano",
+        "Elo": 2803
+      }
+    ],
+    [
+      {
+        "name": "Gukesh",
+        "Elo": 2777
+      },
+      {
+        "name": "Magnus",
+        "Elo": 2833
+      }
+    ],
+    [
+      {
+        "name": "Nodirbek",
+        "Elo": 2766
+      },
+      {
+        "name": "Ian",
+        "Elo": 2754
+      }
+    ],
+    [
+      {
+        "name": "Alireza",
+        "Elo": 2760
+      },
+      {
+        "name": "Yi",
+        "Elo": 2755
+      }
+    ]
+  ],
+  [
+    [
+      {
+        "name": "Anand",
+        "Elo": 2750
+      },
+      {
+        "name": "Yi",
+        "Elo": 2755
+      }
+    ],
+    [
+      {
+        "name": "Ian",
+        "Elo": 2754
+      },
+      {
+        "name": "Alireza",
+        "Elo": 2760
+      }
+    ],
+    [
+      {
+        "name": "Magnus",
+        "Elo": 2833
+      },
+      {
+        "name": "Nodirbek",
+        "Elo": 2766
+      }
+    ],
+    [
+      {
+        "name": "Fabiano",
+        "Elo": 2803
+      },
+      {
+        "name": "Gukesh",
+        "Elo": 2777
+      }
+    ],
+    [
+      {
+        "name": "Hikaru",
+        "Elo": 2802
+      },
+      {
+        "name": "Arjun",
+        "Elo": 2801
+      }
+    ]
+  ],
+  [
+    [
+      {
+        "name": "Arjun",
+        "Elo": 2801
+      },
+      {
+        "name": "Anand",
+        "Elo": 2750
+      }
+    ],
+    [
+      {
+        "name": "Gukesh",
+        "Elo": 2777
+      },
+      {
+        "name": "Hikaru",
+        "Elo": 2802
+      }
+    ],
+    [
+      {
+        "name": "Nodirbek",
+        "Elo": 2766
+      },
+      {
+        "name": "Fabiano",
+        "Elo": 2803
+      }
+    ],
+    [
+      {
+        "name": "Alireza",
+        "Elo": 2760
+      },
+      {
+        "name": "Magnus",
+        "Elo": 2833
+      }
+    ],
+    [
+      {
+        "name": "Yi",
+        "Elo": 2755
+      },
+      {
+        "name": "Ian",
+        "Elo": 2754
+      }
+    ]
+  ],
+  [
+    [
+      {
+        "name": "Anand",
+        "Elo": 2750
+      },
+      {
+        "name": "Ian",
+        "Elo": 2754
+      }
+    ],
+    [
+      {
+        "name": "Magnus",
+        "Elo": 2833
+      },
+      {
+        "name": "Yi",
+        "Elo": 2755
+      }
+    ],
+    [
+      {
+        "name": "Fabiano",
+        "Elo": 2803
+      },
+      {
+        "name": "Alireza",
+        "Elo": 2760
+      }
+    ],
+    [
+      {
+        "name": "Hikaru",
+        "Elo": 2802
+      },
+      {
+        "name": "Nodirbek",
+        "Elo": 2766
+      }
+    ],
+    [
+      {
+        "name": "Arjun",
+        "Elo": 2801
+      },
+      {
+        "name": "Gukesh",
+        "Elo": 2777
+      }
+    ]
+  ],
+  [
+    [
+      {
+        "name": "Gukesh",
+        "Elo": 2777
+      },
+      {
+        "name": "Anand",
+        "Elo": 2750
+      }
+    ],
+    [
+      {
+        "name": "Nodirbek",
+        "Elo": 2766
+      },
+      {
+        "name": "Arjun",
+        "Elo": 2801
+      }
+    ],
+    [
+      {
+        "name": "Alireza",
+        "Elo": 2760
+      },
+      {
+        "name": "Hikaru",
+        "Elo": 2802
+      }
+    ],
+    [
+      {
+        "name": "Yi",
+        "Elo": 2755
+      },
+      {
+        "name": "Fabiano",
+        "Elo": 2803
+      }
+    ],
+    [
+      {
+        "name": "Ian",
+        "Elo": 2754
+      },
+      {
+        "name": "Magnus",
+        "Elo": 2833
+      }
+    ]
+  ]
+]

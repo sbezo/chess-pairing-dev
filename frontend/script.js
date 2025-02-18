@@ -1,6 +1,5 @@
 let players = []; // Store input data
 let rounds = []; // Store rounds data
-let currentRound = 1; //Store current round number
 
 function addToTable() {
     let name = document.getElementById("name").value;
@@ -113,7 +112,7 @@ function lockAndPairing() {
 
     // Generate pairings
     rounds = generateBergerPairings(players);
-    createRoundTab();
+    //createRoundTab();
 
     // Create tabs for all rounds
     for (let i = 1; i <= (rounds.length - 1); i++) {
@@ -127,12 +126,9 @@ function lockAndPairing() {
     generateCrossTable();
 }
 
-function createRoundTab() {
+function createRoundTab(roundNumber) {
     const roundTabs = document.getElementById("roundTabs");
     const roundContents = document.getElementById("roundContents");
-
-    // Capture the current round number
-    const roundNumber = currentRound;
 
     // Create round tab
     const roundTab = document.createElement("div");
@@ -176,26 +172,12 @@ function createRoundTab() {
     roundContents.appendChild(roundContent);
     
     openRound(roundNumber);
-    currentRound++; // Increment the current round after creating the tab and content
 }
 
 function updateResult(roundIndex, pairIndex, result) {
     const [player1Score, player2Score] = result.split('-').map(Number);
     rounds[roundIndex][pairIndex].result = { player1Score, player2Score };
-}
-
-function nextRound() {
-// Save results for the current round
-const roundContent = document.getElementById(`round${currentRound - 1}`);
-const results = roundContent.querySelectorAll('select');
-results.forEach((select, index) => {
-    const result = select.value;
-    const [player1Score, player2Score] = result.split('-').map(Number);
-    rounds[currentRound - 2][index].result = { player1Score, player2Score };
-});
-
-
-createRoundTab();
+    updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, player1Score);
 }
 
 function openRound(roundNumber) {
@@ -205,7 +187,6 @@ function openRound(roundNumber) {
     roundTabs.forEach(tab => tab.classList.remove("active"));
     roundContents.forEach(content => content.classList.remove("active"));
 
-    console.log(document.querySelector(`.round-tab:nth-child(${roundNumber})`).classList.add("active"))
     document.querySelector(`.round-tab:nth-child(${roundNumber})`).classList.add("active");
     document.getElementById(`round${roundNumber}`).classList.add("active");
 }

@@ -41,9 +41,23 @@ function updateCrosstable(player1, player2, result) {
     let cell = table.rows[ind1 + 1].cells[ind2 + 1];
     cell.innerText = result;
     let reverseCell = table.rows[ind2 + 1].cells[ind1 + 1];
-    if (result === "0.5") {
+    if (result == "0.5") {
         reverseCell.innerText = result;
     } else {
         reverseCell.innerText = (result + 1) % 2;
     }
+}
+
+function saveResults() {
+    console.log('Saving rounds:', rounds);
+    const jsonContent = JSON.stringify(rounds);
+    const blob = new Blob([jsonContent], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "results.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up
+    URL.revokeObjectURL(url); // Clean up the URL object
 }

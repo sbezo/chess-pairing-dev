@@ -115,7 +115,7 @@ function lockAndPairing() {
     //createRoundTab();
 
     // Create tabs for all rounds
-    for (let i = 1; i <= (rounds.length - 1); i++) {
+    for (let i = 1; i <= (rounds.length); i++) {
         createRoundTab(i);
     }
 
@@ -176,7 +176,7 @@ function createRoundTab(roundNumber) {
 
 function updateResult(roundIndex, pairIndex, result) {
     const [player1Score, player2Score] = result.split('-').map(Number);
-    rounds[roundIndex][pairIndex].result = { player1Score, player2Score };
+    rounds[roundIndex][pairIndex][2] = ({player1Score});
     updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, player1Score);
 }
 

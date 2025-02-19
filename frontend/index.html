@@ -25,13 +25,13 @@
         <input type="number" id="Elo" placeholder="Enter Elo" required>
         <button onclick="addToTable()">Add</button>
         <div class="button-container">
-            <button onclick="importDemo()">Demo Import</button>
             <button onclick="sortPlayers()">Sort Players</button>
             <button onclick="randomizePlayers()">Randomize Players</button>
             <button onclick="clearTable()">Clear Table</button>
+            <button onclick="exportToCSV()">Save Players</button>
             <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="importFromCSV(event)">
-            <button onclick="document.getElementById('csvFileInput').click()">Import from CSV</button>
-            <button onclick="exportToCSV()">Export to CSV</button>
+            <button onclick="document.getElementById('csvFileInput').click()">Load Players</button>
+            <button onclick="importDemo()">Load Demo Players</button>
             <button onclick="lockAndPairing()">Lock & Start Pairing</button>
 
         </div>
@@ -54,10 +54,8 @@
     <div id="tab2" class="tab-content">
         <h2>Pairing</h2>   
         <button onclick="saveResults()">Save Results</button>
-        <button onclick="loadResults(event)">Load Results</button>
         <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="loadResults(event)">
         <button onclick="document.getElementById('jsonFileInput').click()">Load Results</button>
-        <button onclick="demoResults()">Demo Results</button>        
         <div id="roundTabs" class="round-container">
             <!-- Round tabs will be added here -->
         </div>

@@ -112,7 +112,15 @@ function lockAndPairing() {
 
     // Generate pairings
     rounds = generateBergerPairings(players);
-    //createRoundTab();
+    console.log('Generated pairings:', rounds);
+
+    // Add score to the pairings - "1" or "0" or "0.5" or ""
+    rounds.forEach(round => {
+        round.forEach(pair => {
+            pair.push({ Score: "" });
+        });
+    });
+    console.log('Generated pairings:', rounds);
 
     // Create tabs for all rounds
     for (let i = 1; i <= (rounds.length); i++) {
@@ -159,9 +167,9 @@ function createRoundTab(roundNumber) {
                     <td>
                         <select onchange="updateResult(${roundNumber - 1}, ${index}, this.value)">
                             <option value="" selected> - </option>
-                            <option value="1-0">1-0</option>
-                            <option value="0-1">0-1</option>
-                            <option value="0.5-0.5">Draw</option>
+                            <option value="1">1-0</option>
+                            <option value="0">0-1</option>
+                            <option value="0.5">Draw</option>
                         </select>
                     </td>
                 </tr>
@@ -175,9 +183,9 @@ function createRoundTab(roundNumber) {
 }
 
 function updateResult(roundIndex, pairIndex, result) {
-    const [player1Score, player2Score] = result.split('-').map(Number);
-    rounds[roundIndex][pairIndex][2] = ({player1Score});
-    updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, player1Score);
+    const [Score, player2Score] = result.split('-').map(Number);
+    rounds[roundIndex][pairIndex][2] = ({Score});
+    updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, Score);
 }
 
 function openRound(roundNumber) {
@@ -234,3 +242,165 @@ function importDemo() {
     ]
     updateTable();
 }
+
+function generateCrossTable() {
+    let table = document.getElementById("crossTable");
+
+    // Create the header row
+    let headerRow = table.insertRow();
+    headerRow.insertCell().outerHTML = "<th></th>"; // Empty top-left corner
+    players.forEach(player => {
+        let th = document.createElement("th");
+        th.textContent = player.name;
+        headerRow.appendChild(th);
+    });
+
+    // Create rows for players
+    players.forEach((player, rowIndex) => {
+        let row = table.insertRow();
+        let nameCell = row.insertCell();
+        nameCell.textContent = player.name; // Player name in the first column
+        nameCell.style.fontWeight = "bold";
+
+        players.forEach((opponent, colIndex) => {
+            let cell = row.insertCell();
+            if (rowIndex === colIndex) {
+                cell.classList.add("empty"); // Empty cell for self-match
+                cell.textContent = "X";
+            } else {
+                cell.textContent = "-"; // Placeholder for match results
+            }
+        });
+    });
+}
+
+function lookupPlayerIndex(name) {
+    // return index of requested player
+    return players.findIndex(player => player.name === name);
+}
+
+function updateCrosstable(player1, player2, result) {
+    // two coresponding fields in the table are updated
+    let ind1 = lookupPlayerIndex(player1)
+    let ind2 = lookupPlayerIndex(player2)
+    let table = document.getElementById("crossTable");
+    let cell = table.rows[ind1 + 1].cells[ind2 + 1];
+    cell.innerText = result;
+    let reverseCell = table.rows[ind2 + 1].cells[ind1 + 1];
+    if (result == "0.5") {
+        reverseCell.innerText = result;
+    } else {
+        reverseCell.innerText = (result + 1) % 2;
+    }
+}
+
+function saveResults() {
+    // adding list of players as last element of rounds array
+    let playersList = [];
+    players.forEach(player => {
+        playersList.push(player.name);
+    });
+    rounds.push(playersList);
+    console.log('Saving rounds:', rounds);
+    const jsonContent = JSON.stringify(rounds);
+    const blob = new Blob([jsonContent], { type: "application/json" }); //vytvori binarny objekt, ktory bude obsahovat json data
+    const url = URL.createObjectURL(blob); //vytvori temporrary URL pre tento objekt
+    const link = document.createElement("a"); //vytvori anchor element, ktory bude pouzity na ulozenie Blob contentu
+
+    link.href = url;
+    link.download = "results.json";
+    document.body.appendChild(link); //vlozi link do body dokumentu, neskor sa nan programom klikne
+    link.click(); //simuluje click to anchor element
+    document.body.removeChild(link); // odstrani element z body dokumentu
+    URL.revokeObjectURL(url); // Clean up the URL object
+}
+
+function loadResults(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result;
+        try {
+            const loadedRounds = JSON.parse(text); // Parse the JSON content
+            console.log('loadedRounds:', loadedRounds);
+            console.log('loadedRounds last item:', loadedRounds[loadedRounds.length - 1]);
+            //check if the last element of the array is list of players
+            let playersList = [];
+            let playersListFromFile = [];
+            players.forEach(player => {
+                playersList.push(player.name);
+            });
+            playersListFromFile = loadedRounds[loadedRounds.length - 1];
+
+            if (playersList.toString != playersListFromFile.toString) {
+                alert("The list of players in the file does not match the list of players in the table.");
+                return; //if so, do not load results
+            }
+
+            rounds = []
+            loadedRounds.pop(); //remove the last element from the array
+            rounds = loadedRounds;
+            console.log('rounds after check:', rounds);
+
+            
+            clearExistingResults(); // Clear existing results in pairing subtabs for each round
+            //clearCrosstable(); // Clear existing cross table
+
+            showLoadedResults(); // Show the loaded results in pairing tabs for each round
+            // make subtab with round 1 active
+            //openRound(1);
+
+            
+        } catch (error) {
+            console.error('Error parsing JSON:', error);
+        }
+    };
+    reader.readAsText(file);
+}
+
+function clearExistingResults() {
+    const roundTabs = document.getElementById("roundTabs");
+    const roundContents = document.getElementById("roundContents");
+
+    // Clear existing round tabs and contents
+    roundTabs.innerHTML = "";
+    roundContents.innerHTML = "";
+}
+
+function showLoadedResults() {
+    // Recreate round tabs and contents based on loaded rounds data
+    for (let i = 1; i <= rounds.length; i++) {
+        createRoundTab(i);
+    }
+
+    // Update the result values based on the loaded rounds data
+    rounds.forEach((round, roundIndex) => {
+        round.forEach((pair, pairIndex) => {
+            let result = rounds[roundIndex][pairIndex][2].Score.toString();            
+            console.log("roundIndex:", roundIndex, "pairIndex:", pairIndex, "result:", result, 'typeof:', typeof result);
+            let fullResult;
+            if (result == "1") {
+                fullResult = "1-0";
+            } else if (result == "0") {
+                fullResult = "0-1";
+            } else if (result == "0.5") {
+                fullResult = "0.5-0.5";
+            } else {
+                fullResult = "";
+            }
+            console.log("fullResult:", fullResult);
+            let selectElement = document.querySelector(`#round${roundIndex + 1} select[onchange="updateResult(${roundIndex}, ${pairIndex}, this.value)"]`);
+            if (selectElement) {
+                selectElement.value = fullResult;
+            }
+            updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result)
+        });
+    });
+
+}
+
+function clearCrosstable() {
+    let table = document.getElementById("crossTable");
+    table.innerHTML = ""; // Clear existing rows
+}
+

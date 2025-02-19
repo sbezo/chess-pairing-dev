@@ -52,10 +52,13 @@
 
     <!-- Tab 2: Pairing -->
     <div id="tab2" class="tab-content">
-        <h2>Pairing</h2>   
-        <button onclick="saveResults()">Save Results</button>
-        <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="loadResults(event)">
-        <button onclick="document.getElementById('jsonFileInput').click()">Load Results</button>
+        <h2>Pairing</h2>
+        <div class="button-container">
+            <button onclick="saveResults()">Save Results</button>
+            <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="loadResults(event)">
+            <button onclick="document.getElementById('jsonFileInput').click()">Load Results</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
         <div id="roundTabs" class="round-container">
             <!-- Round tabs will be added here -->
         </div>

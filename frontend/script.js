@@ -97,7 +97,7 @@ function lockAndPairing() {
     document.getElementById("Elo").disabled = true;
 
     // Disable buttons
-    document.querySelectorAll('.button-container button').forEach(button => {
+    document.querySelectorAll('#tab1 .button-container button').forEach(button => {
         button.disabled = true;
     });
 
@@ -112,15 +112,13 @@ function lockAndPairing() {
 
     // Generate pairings
     rounds = generateBergerPairings(players);
-    console.log('Generated pairings:', rounds);
 
     // Add score to the pairings - "1" or "0" or "0.5" or ""
     rounds.forEach(round => {
         round.forEach(pair => {
-            pair.push({ Score: "" });
+            pair.push({ Score: "-" });
         });
     });
-    console.log('Generated pairings:', rounds);
 
     // Create tabs for all rounds
     for (let i = 1; i <= (rounds.length); i++) {
@@ -166,7 +164,7 @@ function createRoundTab(roundNumber) {
                     <td>${pair[1].name}</td>
                     <td>
                         <select onchange="updateResult(${roundNumber - 1}, ${index}, this.value)">
-                            <option value="" selected> - </option>
+                            <option value="-" selected> - </option>
                             <option value="1">1-0</option>
                             <option value="0">0-1</option>
                             <option value="0.5">Draw</option>
@@ -183,9 +181,8 @@ function createRoundTab(roundNumber) {
 }
 
 function updateResult(roundIndex, pairIndex, result) {
-    const [Score, player2Score] = result.split('-').map(Number);
-    rounds[roundIndex][pairIndex][2] = ({Score});
-    updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, Score);
+    rounds[roundIndex][pairIndex][2] = ({result});
+    updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result);
 }
 
 function openRound(roundNumber) {
@@ -285,10 +282,15 @@ function updateCrosstable(player1, player2, result) {
     let ind2 = lookupPlayerIndex(player2)
     let table = document.getElementById("crossTable");
     let cell = table.rows[ind1 + 1].cells[ind2 + 1];
-    cell.innerText = result;
+    if (result == "-") {
+        cell.innerText = "";
+    } else
+        cell.innerText = result;
     let reverseCell = table.rows[ind2 + 1].cells[ind1 + 1];
     if (result == "0.5") {
         reverseCell.innerText = result;
+    } else if (result == "-") {
+        reverseCell.innerText = "";
     } else {
         reverseCell.innerText = (result + 1) % 2;
     }
@@ -301,7 +303,6 @@ function saveResults() {
         playersList.push(player.name);
     });
     rounds.push(playersList);
-    console.log('Saving rounds:', rounds);
     const jsonContent = JSON.stringify(rounds);
     const blob = new Blob([jsonContent], { type: "application/json" }); //vytvori binarny objekt, ktory bude obsahovat json data
     const url = URL.createObjectURL(blob); //vytvori temporrary URL pre tento objekt
@@ -322,35 +323,49 @@ function loadResults(event) {
         const text = e.target.result;
         try {
             const loadedRounds = JSON.parse(text); // Parse the JSON content
-            console.log('loadedRounds:', loadedRounds);
-            console.log('loadedRounds last item:', loadedRounds[loadedRounds.length - 1]);
-            //check if the last element of the array is list of players
             let playersList = [];
             let playersListFromFile = [];
             players.forEach(player => {
                 playersList.push(player.name);
             });
             playersListFromFile = loadedRounds[loadedRounds.length - 1];
-
-            if (playersList.toString != playersListFromFile.toString) {
-                alert("The list of players in the file does not match the list of players in the table.");
+            if (playersList.join() != playersListFromFile.join()) {
+                alert("You are trying to load results for different set of players.");
                 return; //if so, do not load results
             }
 
-            rounds = []
+            //rounds = []
             loadedRounds.pop(); //remove the last element from the array
             rounds = loadedRounds;
-            console.log('rounds after check:', rounds);
 
             
             clearExistingResults(); // Clear existing results in pairing subtabs for each round
-            //clearCrosstable(); // Clear existing cross table
+            clearCrosstable(); // Clear existing cross table
 
-            showLoadedResults(); // Show the loaded results in pairing tabs for each round
-            // make subtab with round 1 active
-            //openRound(1);
+            // Create tabs for all rounds
+            for (let i = 1; i <= (rounds.length); i++) {
+                createRoundTab(i);
+            }
 
-            
+            // Generate empty cross table
+            generateCrossTable();
+
+            // Update the result values based on the loaded rounds data
+            rounds.forEach((round, roundIndex) => {
+                round.forEach((pair, pairIndex) => {
+                    let result = rounds[roundIndex][pairIndex][2].Score.toString();            
+                    //console.log("roundIndex:", roundIndex, "pairIndex:", pairIndex, "result:", result, 'typeof:', typeof result);
+                    
+                    let selectElement = document.querySelector(`#round${roundIndex + 1} select[onchange="updateResult(${roundIndex}, ${pairIndex}, this.value)"]`);
+                    if (selectElement) {
+                        selectElement.value = result;
+                    }
+                    console.log(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result);
+                    updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result)
+                });
+            });
+            //set the first round as active
+            openRound(1);            
         } catch (error) {
             console.error('Error parsing JSON:', error);
         }
@@ -367,40 +382,35 @@ function clearExistingResults() {
     roundContents.innerHTML = "";
 }
 
-function showLoadedResults() {
-    // Recreate round tabs and contents based on loaded rounds data
-    for (let i = 1; i <= rounds.length; i++) {
-        createRoundTab(i);
-    }
-
-    // Update the result values based on the loaded rounds data
-    rounds.forEach((round, roundIndex) => {
-        round.forEach((pair, pairIndex) => {
-            let result = rounds[roundIndex][pairIndex][2].Score.toString();            
-            console.log("roundIndex:", roundIndex, "pairIndex:", pairIndex, "result:", result, 'typeof:', typeof result);
-            let fullResult;
-            if (result == "1") {
-                fullResult = "1-0";
-            } else if (result == "0") {
-                fullResult = "0-1";
-            } else if (result == "0.5") {
-                fullResult = "0.5-0.5";
-            } else {
-                fullResult = "";
-            }
-            console.log("fullResult:", fullResult);
-            let selectElement = document.querySelector(`#round${roundIndex + 1} select[onchange="updateResult(${roundIndex}, ${pairIndex}, this.value)"]`);
-            if (selectElement) {
-                selectElement.value = fullResult;
-            }
-            updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result)
-        });
-    });
-
-}
-
 function clearCrosstable() {
     let table = document.getElementById("crossTable");
     table.innerHTML = ""; // Clear existing rows
+}
+
+function clearResults() {
+    rounds = [];
+    clearExistingResults();
+    clearCrosstable();
+
+    // Generate pairings
+    rounds = generateBergerPairings(players);
+
+    // Add score to the pairings - "1" or "0" or "0.5" or ""
+    rounds.forEach(round => {
+        round.forEach(pair => {
+            pair.push({ Score: "-" });
+        });
+    });
+
+    // Create tabs for all rounds
+    for (let i = 1; i <= (rounds.length); i++) {
+        createRoundTab(i);
+    }
+
+    // Make round 1 active tab
+    openRound(1);
+
+    // Generate empty cross table
+    generateCrossTable();
 }
 

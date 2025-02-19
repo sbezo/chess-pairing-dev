@@ -1,9 +1,9 @@
-Load Results - vytroubleshootovat...
+
 
 upozornenie na:
     znovunacitanie stranky
     load Results
-    
+
 dorobit standing
 dorobit about
 dorobit README

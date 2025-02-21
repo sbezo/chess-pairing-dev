@@ -2,6 +2,7 @@ let players = []; // Store input data
 let rounds = []; // Store rounds data
 
 function addToTable() {
+    // Add player & ELO to the table
     let name = document.getElementById("name").value;
     let Elo = document.getElementById("Elo").value;
     if (!Elo) {
@@ -10,7 +11,6 @@ function addToTable() {
     if (name && Elo) {
         let table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
         let newRow = table.insertRow();
-
         let nameCell = newRow.insertCell(0);
         let EloCell = newRow.insertCell(1);
         let actionCell = newRow.insertCell(2);
@@ -27,7 +27,7 @@ function addToTable() {
         document.getElementById("Elo").value = "";
 
     } else {
-        alert("Please enter both name and Elo.");
+        alert("Please enter name.");
     }
 }
 
@@ -36,7 +36,6 @@ function deleteRow(button) {
     let rowIndex = row.rowIndex - 1; // Adjust for header row
     players.splice(rowIndex, 1); // Remove from players array
     row.parentNode.removeChild(row); // Remove row from table
-
 }
 
 function sortPlayers() {
@@ -113,10 +112,10 @@ function lockAndPairing() {
     // Generate pairings
     rounds = generateBergerPairings(players);
 
-    // Add score to the pairings - "1" or "0" or "0.5" or ""
+    // Add result to the pairings - "1" or "0" or "0.5" or ""
     rounds.forEach(round => {
         round.forEach(pair => {
-            pair.push({ Score: "-" });
+            pair.push({ result: "-" });
         });
     });
 
@@ -222,6 +221,9 @@ function openTab(tabId) {
 
     document.getElementById(tabId).classList.add('active');
     document.querySelector(`.tab-container .tab[onclick="openTab('${tabId}')"]`).classList.add('active');
+    if (tabId === "tab4") {
+        calculateStandings();
+    }
 }
 
 function importDemo() {
@@ -333,14 +335,17 @@ function loadResults(event) {
                 alert("You are trying to load results for different set of players.");
                 return; //if so, do not load results
             }
-
+            //console.log("playersList:", playersList, "playersListFromFile:", playersListFromFile);
+            //console.log("playersList.join():", playersList.join(), "playersListFromFile.join():", playersListFromFile.join());
             //rounds = []
             loadedRounds.pop(); //remove the last element from the array
             rounds = loadedRounds;
+            //console.log("rounds:", rounds);
 
             
             clearExistingResults(); // Clear existing results in pairing subtabs for each round
             clearCrosstable(); // Clear existing cross table
+            //console.log("tabs cleared");
 
             // Create tabs for all rounds
             for (let i = 1; i <= (rounds.length); i++) {
@@ -349,18 +354,19 @@ function loadResults(event) {
 
             // Generate empty cross table
             generateCrossTable();
+            //console.log("crosstable generated");
 
             // Update the result values based on the loaded rounds data
             rounds.forEach((round, roundIndex) => {
                 round.forEach((pair, pairIndex) => {
-                    let result = rounds[roundIndex][pairIndex][2].Score.toString();            
+                    let result = rounds[roundIndex][pairIndex][2].result.toString();            
                     //console.log("roundIndex:", roundIndex, "pairIndex:", pairIndex, "result:", result, 'typeof:', typeof result);
                     
                     let selectElement = document.querySelector(`#round${roundIndex + 1} select[onchange="updateResult(${roundIndex}, ${pairIndex}, this.value)"]`);
                     if (selectElement) {
                         selectElement.value = result;
                     }
-                    console.log(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result);
+                    //console.log(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result);
                     updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result)
                 });
             });
@@ -395,10 +401,10 @@ function clearResults() {
     // Generate pairings
     rounds = generateBergerPairings(players);
 
-    // Add score to the pairings - "1" or "0" or "0.5" or ""
+    // Add result to the pairings - "1" or "0" or "0.5" or ""
     rounds.forEach(round => {
         round.forEach(pair => {
-            pair.push({ Score: "-" });
+            pair.push({ result: "-" });
         });
     });
 
@@ -414,3 +420,91 @@ function clearResults() {
     generateCrossTable();
 }
 
+function calculateStandings() {
+    let standings = players.map(player => ({
+        name: player.name,
+        points: 0,
+        berger: 0,
+    }));
+
+    // Calculate points
+    rounds.forEach(round => {
+        round.forEach(pair => {
+            let player1 = standings.find(p => p.name === pair[0].name);
+            let player2 = standings.find(p => p.name === pair[1].name);
+            if (pair[2].result === "1") {
+                player1.points += 1;
+            } else if (pair[2].result === "0") {
+                player2.points += 1;
+            } else if (pair[2].result === "0.5") {
+                player1.points += 0.5;
+                player2.points += 0.5;
+            }
+        });
+    });
+
+    // Calculate Neustadtl Sonneborn–Berger score
+    rounds.forEach(round => {
+        round.forEach(pair => {
+            let player1 = standings.find(p => p.name === pair[0].name);
+            let player2 = standings.find(p => p.name === pair[1].name);
+            if (pair[2].result === "1") {
+                player1.berger += player2.points;
+            } else if (pair[2].result === "0") {
+                player2.berger += player1.points;
+            } else if (pair[2].result === "0.5") {
+                player1.berger += player2.points * 0.5;
+                player2.berger += player1.points * 0.5;
+            }
+        });
+    });
+
+    // Sort standings based on Berger score
+    standings.sort((a, b) => {
+        if (b.points !== a.points) {
+            return b.points - a.points; // Sort by points
+        } else {
+                return b.berger - a.berger; // Sort by Berger score
+        }
+    });
+
+    // find two players with same score
+    let sameScorePlayers = [];
+
+    for (let i = 0; i < standings.length - 1; i++) {
+        if (standings[i].points == standings[i + 1].points) {
+            sameScorePlayers.push(standings[i]);
+            sameScorePlayers.push(standings[i + 1]);
+            if (mutualResult(sameScorePlayers[0].name, sameScorePlayers[1].name) == "0") {
+                //change the order of players
+                let temp = standings[i];
+                standings[i] = standings[i + 1];
+                standings[i + 1] = temp;
+            }
+        }
+    }
+
+    console.log("standings:", standings);
+    return standings;
+}
+
+function mutualResult(player1, player2) {
+    let mutualResult = "";
+    rounds.forEach(round => {
+        round.forEach(pair => {
+            if ((pair[0].name == player1 && pair[1].name == player2)){
+                mutualResult = pair[2].result;
+            }
+            if ((pair[0].name == player2 && pair[1].name == player1)){
+                if (pair[2].result == "1") {
+                    mutualResult = "0";
+                } else if (pair[2].result == "0") {
+                    mutualResult = "1";
+                } else {
+                    mutualResult = pair[2].result;
+                }
+            }
+        });
+    });
+    return mutualResult;
+}

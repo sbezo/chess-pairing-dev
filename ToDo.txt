@@ -1,10 +1,9 @@
-
+dorobit load demo results
 
 upozornenie na:
     znovunacitanie stranky
     load Results
 
-dorobit standing
 dorobit about
 dorobit README
 

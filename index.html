@@ -57,6 +57,7 @@
             <button onclick="saveResults()">Save Results</button>
             <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="loadResults(event)">
             <button onclick="document.getElementById('jsonFileInput').click()">Load Results</button>
+            <button onclick="loadDemoResults()">Load Demo Results</button>
             <button onclick="clearResults()">Clear Results</button>
         </div>
         <div id="roundTabs" class="round-container">
@@ -79,8 +80,11 @@
         <table id="standingsTable">
             <thead>
                 <tr>
+                    <th>Number</th>
                     <th>Player</th>
+                    <th>Elo</th>
                     <th>Points</th>
+                    <th>Berger Score</th>
                 </tr>
             </thead>
             <tbody>

@@ -98,3 +98,12 @@ pointer-events: none;
 #tab3 td.empty {
     background-color: #ddd;
 }
+
+/* Apply fixed width ONLY to the table inside tab4 */
+
+#tab4 table {
+    border-collapse: collapse;
+    width: 50%;
+    margin: 20px 0 20px 0;
+    table-layout: fixed; /* Ensures uniform column width */
+}

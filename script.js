@@ -379,6 +379,12 @@ function loadResults(event) {
     reader.readAsText(file);
 }
 
+function loadDemoResults() {
+    const demoResults = [[[{"name":"Magnus","Elo":2833},{"name":"Anand","Elo":2750},{"result":"1"}],[{"name":"Fabiano","Elo":2803},{"name":"Ian","Elo":2754},{"result":"1"}],[{"name":"Hikaru","Elo":2802},{"name":"Yi","Elo":2755},{"result":"0.5"}],[{"name":"Arjun","Elo":2801},{"name":"Alireza","Elo":2760},{"result":"1"}],[{"name":"Gukesh","Elo":2777},{"name":"Nodirbek","Elo":2766},{"result":"1"}]],[[{"name":"Anand","Elo":2750},{"name":"Nodirbek","Elo":2766},{"result":"1"}],[{"name":"Alireza","Elo":2760},{"name":"Gukesh","Elo":2777},{"result":"0"}],[{"name":"Yi","Elo":2755},{"name":"Arjun","Elo":2801},{"result":"0.5"}],[{"name":"Ian","Elo":2754},{"name":"Hikaru","Elo":2802},{"result":"0.5"}],[{"name":"Magnus","Elo":2833},{"name":"Fabiano","Elo":2803},{"result":"0.5"}]],[[{"name":"Fabiano","Elo":2803},{"name":"Anand","Elo":2750},{"result":"0"}],[{"name":"Hikaru","Elo":2802},{"name":"Magnus","Elo":2833},{"result":"0"}],[{"name":"Arjun","Elo":2801},{"name":"Ian","Elo":2754},{"result":"0"}],[{"name":"Gukesh","Elo":2777},{"name":"Yi","Elo":2755},{"result":"0.5"}],[{"name":"Nodirbek","Elo":2766},{"name":"Alireza","Elo":2760},{"result":"1"}]],[[{"name":"Anand","Elo":2750},{"name":"Alireza","Elo":2760},{"result":"1"}],[{"name":"Yi","Elo":2755},{"name":"Nodirbek","Elo":2766},{"result":"1"}],[{"name":"Ian","Elo":2754},{"name":"Gukesh","Elo":2777},{"result":"0"}],[{"name":"Magnus","Elo":2833},{"name":"Arjun","Elo":2801},{"result":"0"}],[{"name":"Fabiano","Elo":2803},{"name":"Hikaru","Elo":2802},{"result":"0.5"}]],[[{"name":"Hikaru","Elo":2802},{"name":"Anand","Elo":2750},{"result":"1"}],[{"name":"Arjun","Elo":2801},{"name":"Fabiano","Elo":2803},{"result":"0"}],[{"name":"Gukesh","Elo":2777},{"name":"Magnus","Elo":2833},{"result":"0.5"}],[{"name":"Nodirbek","Elo":2766},{"name":"Ian","Elo":2754},{"result":"1"}],[{"name":"Alireza","Elo":2760},{"name":"Yi","Elo":2755},{"result":"1"}]],[[{"name":"Anand","Elo":2750},{"name":"Yi","Elo":2755},{"result":"1"}],[{"name":"Ian","Elo":2754},{"name":"Alireza","Elo":2760},{"result":"0"}],[{"name":"Magnus","Elo":2833},{"name":"Nodirbek","Elo":2766},{"result":"1"}],[{"name":"Fabiano","Elo":2803},{"name":"Gukesh","Elo":2777},{"result":"1"}],[{"name":"Hikaru","Elo":2802},{"name":"Arjun","Elo":2801},{"result":"0.5"}]],[[{"name":"Arjun","Elo":2801},{"name":"Anand","Elo":2750},{"result":"1"}],[{"name":"Gukesh","Elo":2777},{"name":"Hikaru","Elo":2802},{"result":"1"}],[{"name":"Nodirbek","Elo":2766},{"name":"Fabiano","Elo":2803},{"result":"0"}],[{"name":"Alireza","Elo":2760},{"name":"Magnus","Elo":2833},{"result":"0.5"}],[{"name":"Yi","Elo":2755},{"name":"Ian","Elo":2754},{"result":"0.5"}]],[[{"name":"Anand","Elo":2750},{"name":"Ian","Elo":2754},{"result":"1"}],[{"name":"Magnus","Elo":2833},{"name":"Yi","Elo":2755},{"result":"0"}],[{"name":"Fabiano","Elo":2803},{"name":"Alireza","Elo":2760},{"result":"1"}],[{"name":"Hikaru","Elo":2802},{"name":"Nodirbek","Elo":2766},{"result":"1"}],[{"name":"Arjun","Elo":2801},{"name":"Gukesh","Elo":2777},{"result":"1"}]],[[{"name":"Gukesh","Elo":2777},{"name":"Anand","Elo":2750},{"result":"0.5"}],[{"name":"Nodirbek","Elo":2766},{"name":"Arjun","Elo":2801},{"result":"0.5"}],[{"name":"Alireza","Elo":2760},{"name":"Hikaru","Elo":2802},{"result":"0.5"}],[{"name":"Yi","Elo":2755},{"name":"Fabiano","Elo":2803},{"result":"0.5"}],[{"name":"Ian","Elo":2754},{"name":"Magnus","Elo":2833},{"result":"0"}]],["Magnus","Fabiano","Hikaru","Arjun","Gukesh","Nodirbek","Alireza","Yi","Ian","Anand"]];
+    //rounds = demoResults;
+
+}
+
 function clearExistingResults() {
     const roundTabs = document.getElementById("roundTabs");
     const roundContents = document.getElementById("roundContents");
@@ -423,6 +429,7 @@ function clearResults() {
 function calculateStandings() {
     let standings = players.map(player => ({
         name: player.name,
+        elo: player.Elo,
         points: 0,
         berger: 0,
     }));
@@ -483,6 +490,24 @@ function calculateStandings() {
             }
         }
     }
+
+    // Update the standings table
+    let table = document.getElementById("standingsTable").getElementsByTagName('tbody')[0];
+    table.innerHTML = ""; // Clear existing rows
+    for (let i = 0; i < standings.length; i++) {
+        let newRow = table.insertRow();
+        let numberCell = newRow.insertCell(0);
+        let nameCell = newRow.insertCell(1);
+        let eloCell = newRow.insertCell(2);
+        let pointsCell = newRow.insertCell(3);
+        let bergerCell = newRow.insertCell(4);
+        numberCell.textContent = i + 1;
+        nameCell.textContent = standings[i].name;
+        eloCell.textContent = standings[i].elo;
+        pointsCell.textContent = standings[i].points;
+        bergerCell.textContent = standings[i].berger;
+    }
+
 
     console.log("standings:", standings);
     return standings;

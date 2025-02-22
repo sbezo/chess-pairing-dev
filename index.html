@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Page</title>
+    <title>Chess-Pairing</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -57,7 +57,6 @@
             <button onclick="saveResults()">Save Results</button>
             <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="loadResults(event)">
             <button onclick="document.getElementById('jsonFileInput').click()">Load Results</button>
-            <button onclick="loadDemoResults()">Load Demo Results</button>
             <button onclick="clearResults()">Clear Results</button>
         </div>
         <div id="roundTabs" class="round-container">
@@ -95,8 +94,33 @@
 
     <!-- Tab 5: About -->
     <div id="tab5" class="tab-content">
-        <h2>About</h2>
-        <p>About info will be added here.</p>
+        <section id="about">
+            <h2>About</h2>
+            <p><strong>Chess-Pairing software</strong> for single round-robin chess tournaments.</p>
+            <p>Tournament pairings are based on the <strong>Berger tables</strong>, following the original construction method developed by <a href="https://en.wikipedia.org/wiki/Round-robin_tournament" target="_blank">Richard Schurig</a>.</p>
+            
+            <h3>Version 1.0</h3>
+            
+            <h3>Features:</h3>
+            <ul>
+                <li>Sort & randomize players</li>
+                <li>Save & load list of players</li>
+                <li>Load a demo player list with Elo ratings</li>
+                <li>Save & load result for given list of players</li>
+            </ul>
+            
+            <p><em>Note:</em> Please test the software before use. The software is provided <strong>as-is</strong> and used at your own risk.</p>
+            
+            <h3>Standings Order:</h3>
+            <ol>
+                <li>Total Points</li>
+                <li>Mutual Match Result</li>
+                <li>Sonneborn–Berger Score</li>
+            </ol>
+            
+            <p><small>Developed by <strong>Stefan Bezo</strong>, 2025</small></p>
+        </section>
+
     </div>
 
 <script src="script.js"></script>

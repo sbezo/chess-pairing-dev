@@ -1,9 +1,0 @@
-dorobit load demo results
-
-upozornenie na:
-    znovunacitanie stranky
-    load Results
-
-dorobit about
-dorobit README
-

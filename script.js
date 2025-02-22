@@ -1,5 +1,5 @@
 let players = []; // Store input data
-let rounds = []; // Store rounds data
+let rounds = [];  // Store rounds data:
 
 function addToTable() {
     // Add player & ELO to the table
@@ -335,17 +335,13 @@ function loadResults(event) {
                 alert("You are trying to load results for different set of players.");
                 return; //if so, do not load results
             }
-            //console.log("playersList:", playersList, "playersListFromFile:", playersListFromFile);
-            //console.log("playersList.join():", playersList.join(), "playersListFromFile.join():", playersListFromFile.join());
             //rounds = []
             loadedRounds.pop(); //remove the last element from the array
             rounds = loadedRounds;
-            //console.log("rounds:", rounds);
 
             
             clearExistingResults(); // Clear existing results in pairing subtabs for each round
             clearCrosstable(); // Clear existing cross table
-            //console.log("tabs cleared");
 
             // Create tabs for all rounds
             for (let i = 1; i <= (rounds.length); i++) {
@@ -354,19 +350,16 @@ function loadResults(event) {
 
             // Generate empty cross table
             generateCrossTable();
-            //console.log("crosstable generated");
 
             // Update the result values based on the loaded rounds data
             rounds.forEach((round, roundIndex) => {
                 round.forEach((pair, pairIndex) => {
                     let result = rounds[roundIndex][pairIndex][2].result.toString();            
-                    //console.log("roundIndex:", roundIndex, "pairIndex:", pairIndex, "result:", result, 'typeof:', typeof result);
                     
                     let selectElement = document.querySelector(`#round${roundIndex + 1} select[onchange="updateResult(${roundIndex}, ${pairIndex}, this.value)"]`);
                     if (selectElement) {
                         selectElement.value = result;
                     }
-                    //console.log(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result);
                     updateCrosstable(rounds[roundIndex][pairIndex][0].name, rounds[roundIndex][pairIndex][1].name, result)
                 });
             });
@@ -377,12 +370,6 @@ function loadResults(event) {
         }
     };
     reader.readAsText(file);
-}
-
-function loadDemoResults() {
-    const demoResults = [[[{"name":"Magnus","Elo":2833},{"name":"Anand","Elo":2750},{"result":"1"}],[{"name":"Fabiano","Elo":2803},{"name":"Ian","Elo":2754},{"result":"1"}],[{"name":"Hikaru","Elo":2802},{"name":"Yi","Elo":2755},{"result":"0.5"}],[{"name":"Arjun","Elo":2801},{"name":"Alireza","Elo":2760},{"result":"1"}],[{"name":"Gukesh","Elo":2777},{"name":"Nodirbek","Elo":2766},{"result":"1"}]],[[{"name":"Anand","Elo":2750},{"name":"Nodirbek","Elo":2766},{"result":"1"}],[{"name":"Alireza","Elo":2760},{"name":"Gukesh","Elo":2777},{"result":"0"}],[{"name":"Yi","Elo":2755},{"name":"Arjun","Elo":2801},{"result":"0.5"}],[{"name":"Ian","Elo":2754},{"name":"Hikaru","Elo":2802},{"result":"0.5"}],[{"name":"Magnus","Elo":2833},{"name":"Fabiano","Elo":2803},{"result":"0.5"}]],[[{"name":"Fabiano","Elo":2803},{"name":"Anand","Elo":2750},{"result":"0"}],[{"name":"Hikaru","Elo":2802},{"name":"Magnus","Elo":2833},{"result":"0"}],[{"name":"Arjun","Elo":2801},{"name":"Ian","Elo":2754},{"result":"0"}],[{"name":"Gukesh","Elo":2777},{"name":"Yi","Elo":2755},{"result":"0.5"}],[{"name":"Nodirbek","Elo":2766},{"name":"Alireza","Elo":2760},{"result":"1"}]],[[{"name":"Anand","Elo":2750},{"name":"Alireza","Elo":2760},{"result":"1"}],[{"name":"Yi","Elo":2755},{"name":"Nodirbek","Elo":2766},{"result":"1"}],[{"name":"Ian","Elo":2754},{"name":"Gukesh","Elo":2777},{"result":"0"}],[{"name":"Magnus","Elo":2833},{"name":"Arjun","Elo":2801},{"result":"0"}],[{"name":"Fabiano","Elo":2803},{"name":"Hikaru","Elo":2802},{"result":"0.5"}]],[[{"name":"Hikaru","Elo":2802},{"name":"Anand","Elo":2750},{"result":"1"}],[{"name":"Arjun","Elo":2801},{"name":"Fabiano","Elo":2803},{"result":"0"}],[{"name":"Gukesh","Elo":2777},{"name":"Magnus","Elo":2833},{"result":"0.5"}],[{"name":"Nodirbek","Elo":2766},{"name":"Ian","Elo":2754},{"result":"1"}],[{"name":"Alireza","Elo":2760},{"name":"Yi","Elo":2755},{"result":"1"}]],[[{"name":"Anand","Elo":2750},{"name":"Yi","Elo":2755},{"result":"1"}],[{"name":"Ian","Elo":2754},{"name":"Alireza","Elo":2760},{"result":"0"}],[{"name":"Magnus","Elo":2833},{"name":"Nodirbek","Elo":2766},{"result":"1"}],[{"name":"Fabiano","Elo":2803},{"name":"Gukesh","Elo":2777},{"result":"1"}],[{"name":"Hikaru","Elo":2802},{"name":"Arjun","Elo":2801},{"result":"0.5"}]],[[{"name":"Arjun","Elo":2801},{"name":"Anand","Elo":2750},{"result":"1"}],[{"name":"Gukesh","Elo":2777},{"name":"Hikaru","Elo":2802},{"result":"1"}],[{"name":"Nodirbek","Elo":2766},{"name":"Fabiano","Elo":2803},{"result":"0"}],[{"name":"Alireza","Elo":2760},{"name":"Magnus","Elo":2833},{"result":"0.5"}],[{"name":"Yi","Elo":2755},{"name":"Ian","Elo":2754},{"result":"0.5"}]],[[{"name":"Anand","Elo":2750},{"name":"Ian","Elo":2754},{"result":"1"}],[{"name":"Magnus","Elo":2833},{"name":"Yi","Elo":2755},{"result":"0"}],[{"name":"Fabiano","Elo":2803},{"name":"Alireza","Elo":2760},{"result":"1"}],[{"name":"Hikaru","Elo":2802},{"name":"Nodirbek","Elo":2766},{"result":"1"}],[{"name":"Arjun","Elo":2801},{"name":"Gukesh","Elo":2777},{"result":"1"}]],[[{"name":"Gukesh","Elo":2777},{"name":"Anand","Elo":2750},{"result":"0.5"}],[{"name":"Nodirbek","Elo":2766},{"name":"Arjun","Elo":2801},{"result":"0.5"}],[{"name":"Alireza","Elo":2760},{"name":"Hikaru","Elo":2802},{"result":"0.5"}],[{"name":"Yi","Elo":2755},{"name":"Fabiano","Elo":2803},{"result":"0.5"}],[{"name":"Ian","Elo":2754},{"name":"Magnus","Elo":2833},{"result":"0"}]],["Magnus","Fabiano","Hikaru","Arjun","Gukesh","Nodirbek","Alireza","Yi","Ian","Anand"]];
-    //rounds = demoResults;
-
 }
 
 function clearExistingResults() {
@@ -509,7 +496,6 @@ function calculateStandings() {
     }
 
 
-    console.log("standings:", standings);
     return standings;
 }
 

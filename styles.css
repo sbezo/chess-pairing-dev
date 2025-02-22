@@ -107,3 +107,13 @@ pointer-events: none;
     margin: 20px;
     table-layout: fixed; /* Ensures uniform column width */
 }
+
+footer {
+    text-align: center;
+    padding: 5px;
+    position: fixed;
+    bottom: 0;
+    width: 90%;
+    background-color: white;
+    border-top: 2px solid black;
+}

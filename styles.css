@@ -105,7 +105,7 @@ pointer-events: none;
     border-collapse: collapse;
     width: 50%;
     margin: 20px;
-    table-layout: fixed; /* Ensures uniform column width */
+    /*table-layout: fixed; /* Ensures uniform column width */
 }
 
 footer {

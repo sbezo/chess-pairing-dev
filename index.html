@@ -6,16 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess-Pairing</title>
     <link rel="stylesheet" href="styles.css">
+
+	<script>
+	function _on_DOM_content_loaded(event) {
+		window.app = new Controller(new Tournament());
+		app.initialize()
+
+		// app.testAll();
+	}
+
+	addEventListener("DOMContentLoaded", _on_DOM_content_loaded);
+	</script>
+
+	<script src="script.js"></script>
+	<script src="berger-fide.js"></script>
+
 </head>
 
 <body>
     <!-- Tabs -->
     <div class="tab-container">
-        <div class="tab active" onclick="openTab('tab1')">Players</div>
-        <div class="tab" onclick="openTab('tab2')">Pairing</div>
-        <div class="tab" onclick="openTab('tab3')">Crosstable</div>
-        <div class="tab" onclick="openTab('tab4')">Standing</div>
-        <div class="tab" onclick="openTab('tab5')">About</div>
+        <div class="tab active" onclick="app.openTab('tab1')">Players</div>
+        <div class="tab" onclick="app.openTab('tab2')">Pairing</div>
+        <div class="tab" onclick="app.openTab('tab3')">Crosstable</div>
+        <div class="tab" onclick="app.openTab('tab4')">Standing</div>
+        <div class="tab" onclick="app.openTab('tab4_5')">Settings</div>
+        <div class="tab" onclick="app.openTab('tab5')">About</div>
     </div>
 
     <!-- Tab 1: Add Player to Table -->
@@ -23,16 +39,17 @@
         <h2>Add Player to Table</h2>
         <input type="text" id="name" placeholder="Enter name" required>
         <input type="number" id="Elo" placeholder="Enter Elo" required>
-        <button onclick="addToTable()">Add</button>
+        <button onclick="app.addPlayerToTable()">Add</button>
         <div class="button-container">
-            <button onclick="sortPlayers()">Sort Players</button>
-            <button onclick="randomizePlayers()">Randomize Players</button>
-            <button onclick="clearTable()">Clear Table</button>
-            <button onclick="exportToCSV()">Save Players</button>
-            <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="importFromCSV(event)">
+            <button onclick="app.sortPlayers()">Sort Players</button>
+            <button onclick="app.randomizePlayers()">Randomize Players</button>
+            <button onclick="app.clearPlayersTable()">Clear Table</button>
+            <button onclick="app.exportToCSV()">Save Players</button>
+            <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="app.importFromCSV(event)">
             <button onclick="document.getElementById('csvFileInput').click()">Load Players</button>
-            <button onclick="importDemo()">Load Demo Players</button>
-            <button onclick="lockAndPairing()">Lock & Start Pairing</button>
+            <button onclick="app.importDemo()">Load Demo Players</button>
+            <button onclick="app.testAll()">Full Demo</button>
+            <button onclick="app.lockAndPairing()">Lock & Start Pairing</button>
 
         </div>
 
@@ -54,10 +71,11 @@
     <div id="tab2" class="tab-content">
         <h2>Pairing</h2>
         <div class="button-container">
-            <button onclick="saveResults()">Save Results</button>
-            <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="loadResults(event)">
-            <button onclick="document.getElementById('jsonFileInput').click()">Load Results</button>
-            <button onclick="clearResults()">Clear Results</button>
+            <button onclick="app.saveAll()">Save All</button>
+            <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="app.loadAll(event)">
+            <button onclick="document.getElementById('jsonFileInput').click()">Load All</button>
+			<!-- <button onclick="app.clearResults()">Clear Results</button> -->
+			<button onclick="app.newTournament()">New Tournament</button>
         </div>
         <div id="roundTabs" class="round-container">
             <!-- Round tabs will be added here -->
@@ -83,13 +101,32 @@
                     <th>Player</th>
                     <th>Elo</th>
                     <th>Points</th>
-                    <th>Berger Score</th>
+					<!-- Additional criteria headers will be added here -->
                 </tr>
             </thead>
             <tbody>
                 <!-- Standings will be populated here -->
             </tbody>
         </table>
+    </div>
+
+    <!-- Tab 4_5: Settings -->
+    <div id="tab4_5" class="tab-content">
+        <section id="settings">
+            <h2>Settings</h2>
+            
+		 	<form id="criteriaForm" onchange="app.criteriaChanged(this)">	
+			<label for="criteria">Final standings criteria (after total score):</label>
+			<select id="criteria">
+				<option value="1">Mutual Results, Berger Score, More Wins</option>
+				<option value="2">Mutual Results, Berger Score</option>
+				<option value="3">Berger Score, Mutual Results, More Wins</option>
+				<option value="4">Berger Score, Mutual Results</option>
+				<option value="5">Berger Score</option>
+				<option value="6">None</option>
+			</select>
+			</form>
+        </section>
     </div>
 
     <!-- Tab 5: About -->
@@ -99,13 +136,9 @@
             <p><strong>Chess-Pairing</strong> software for single round-robin chess tournaments.</p>
             <p>Tournament pairings are based on the <strong>Berger tables</strong>, following the original construction method developed by <a href="https://en.wikipedia.org/wiki/Round-robin_tournament" target="_blank">Richard Schurig</a>.</p>
             <p><em>Note:</em> Please test the software before use. The software is provided <strong>as-is</strong> and used at your own risk.</p>
-            
-            <h3>Standings Order:</h3>
-            <ol>
-                <li>Total Points</li>
-                <li>Mutual Match Result</li>
-                <li>Sonneborn–Berger Score</li>
-            </ol>
+            <p><em>Note:</em> During tournament in progress, save your data periodicaly. After exiting browser, the data are lost. You can load them then from save file.</p>
+            <h2>Release Notes</h2>
+           
             
             <h3>Version 1.0</h3>
             
@@ -116,18 +149,27 @@
                 <li>Load a demo player list with Elo ratings</li>
                 <li>Save & load result for given list of players</li>
             </ul>
+
+            <h3>Version 2.0</h3>
+            
+            <h3>Features:</h3>
+            <ul>
+                <li>Full Demo</li>
+                <li>Save All & Load All</li>
+                <li>New Tournament</li>
+                <li>Settings - final criteria</li>
+                <li>refactoring to OOP</li>
+            </ul>
             
             
             
    
         </section>
         <footer>
-            <p><small>Designed & Developed by Stefan Bezo, 2025. Repository for this project you can find on <a href="https://github.com/sbezo/chess-pairing" target="_blank">GitHub</a>. Feel free to comment, report issues or ask new features, or give a star;)</small></p>    
+            <p><small>Designed & Developed by Stefan Bezo & Juraj Borik, 2025. Repository for this project you can find on <a href="https://github.com/sbezo/chess-pairing" target="_blank">GitHub</a>. Feel free to comment, report issues or ask new features, or give a star;)</small></p>    
         </footer>
     </div>
 
-<script src="script.js"></script>
-<script src="berger-fide.js"></script>
 
 </body>
 </html>

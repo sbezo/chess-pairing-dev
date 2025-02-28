@@ -20,4 +20,4 @@ Features:
     Load a demo player list with Elo ratings
     Save & load result for given list of players
 
-Version 2.0 - in progress
+    

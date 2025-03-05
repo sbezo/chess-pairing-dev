@@ -347,10 +347,10 @@ class Controller {
 			let cookies = document.cookie.split(";").map((x) => x.trim())
 
 			cookies.forEach(cookie => {
-				if (cookie.startswith(Controller.COOKIE_ID)) {
+				if (cookie.startsWith(Controller.COOKIE_ID)) {
 					let data = cookie.split('=')
 					if (data[1] !== "") {
-						this.data.tournamentInfo = data[1]
+						this.data.tournamentInfo.id = data[1]
 					}
 				}
 			});	

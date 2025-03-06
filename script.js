@@ -1,6 +1,4 @@
 
-import { FeatPersistentCookie } from './modules/FeatPersistentCookie.js'
-
 class ResultRow {
 	constructor(player1Idx, player2Idx, result="-") {
 		this.player1Idx = player1Idx
@@ -28,16 +26,7 @@ class Tournament {
 		]
 
 	constructor() {
-		this.tournamentInfo = this.createTournamentInfo() 
-
-		this.players = [], // [ player = { name, Elo, bye (opt)}, ... ]
-		this.rounds = [] // [ round [ ResutRow ,... ], ... ] 
-
-		this.cookieStorage = new FeatPersistentCookie() 
-	}
-
-	createTournamentInfo() {
-		return { 
+		this.tournamentInfo = { 
 
 			// generate random hex string (used for save to distinguish files)
 			// stays same for one tournament
@@ -52,8 +41,6 @@ class Tournament {
 			location_ : "", // opt
 
 			werePlayersRandomized : false,
-			double_rounded : false,
-			pairing_version : 1,
 
 			// the order is priority
 			finalStandingsResolvers : [
@@ -61,29 +48,10 @@ class Tournament {
 				Tournament.SONNEBORG_BERGER_CRIT,
 				Tournament.WINS_CRIT
 			]
-		}
-	}
+		},
 
-	saveToCookie() {
-		try {
-			let data = {}
-			let players_copy = this.players.slice()
-			data.players = players_copy.map(p => { 
-				return {'name' : p.name, 'rating' : p.Elo} })
-			data.results = []
-
-			this.rounds.forEach((round, round_i) => {
-				round.forEach((resultRecord, rec_i) => {
-					data.results.push(result_to_save_id(this.rounds[round_i][rec_i].result))
-				})
-			})
-			data.tournamentInfo = this.tournamentInfo
-
-			this.cookieStorage.saveAll('trndata', data)
-		}
-		catch(e) {
-			console.log(e)
-		}
+		this.players = [], // [ player = { name, Elo, bye (opt)}, ... ]
+		this.rounds = [] // [ round [ ResutRow ,... ], ... ] 
 	}
 		
 	generateRandomId() {
@@ -99,12 +67,10 @@ class Tournament {
 		// if 'bye' set to something other then null, it is bye 
 		// 'bye' variable not used anywhere now
 		this.players.push({ name: name, Elo: Number(Elo), bye: bye });
-		this.saveToCookie()
 	}
 	
 	removePlayer(idx) {
 		this.players.splice(idx, 1); // Remove from players array
-		this.saveToCookie()
 	}
 	
 	lookupPlayerIndex(name) {
@@ -117,7 +83,6 @@ class Tournament {
 			throw new Exception("round or row index out of range");
 		}
     	this.rounds[roundIndex][resultRow].result = result;
-		this.saveToCookie()
 	}
 
 	getPlayer(idx) {
@@ -130,7 +95,6 @@ class Tournament {
 
 	sortPlayers() {
 		this.players.sort((a, b) => b.Elo - a.Elo); // Sort players by Elo in descending order
-		this.saveToCookie()
 	}
 
 	randomizePlayers() {
@@ -139,7 +103,6 @@ class Tournament {
 			[this.players[i], this.players[j]] = [this.players[j], this.players[i]];
 		}
 		this.tournamentInfo.werePlayersRandomized = true
-		this.saveToCookie()
 	}
 
 	addByeIfNeeded() {
@@ -151,24 +114,6 @@ class Tournament {
 
 	clearResults() {
 		this.rounds = [];
-		this.saveToCookie()
-	}
-
-	generatePairingsForCookieLoad(number_of_players, method) {
-		// now only Berger method is supported
-	    this.rounds = generateBergerPairingsIdx(number_of_players);
-
-    	// Add result to the pairings - "1" or "0" or "0.5" or ""
-		// brx: changing pair[3] to ResultRow hard way
-		for (let i=0; i<this.rounds.length; i++) {
-			for (let y=0; y < this.rounds[i].length; y++) {
-				this.rounds[i][y] = new ResultRow(this.rounds[i][y][0], this.rounds[i][y][1], "-");	
-			}
-		}
-
-//		console.assert(!this.hasTornamentId())
-//		this.tournamentInfo.id = this.generateRandomId()
-//		this.saveToCookie()
 	}
 
 	generatePairings(method) {
@@ -185,7 +130,6 @@ class Tournament {
 
 		console.assert(!this.hasTornamentId())
 		this.tournamentInfo.id = this.generateRandomId()
-		this.saveToCookie()
 	}
 
 	calculateStandings() {
@@ -386,30 +330,6 @@ function resultToValue(result) {
 	throw new Exception("result data can't be used as value now");
 }
 
-function result_to_save_id(result) {
-	switch(result) {
-		case "0":
-			return 1
-		case "0.5":
-			return 2
-		case "1":
-			return 3
-		case "0-0":
-			return 4
-		default:
-			return 0
-	}
-}
-
-function result_from_save_id(result) {
-	let pos = [ '-', '0', '0.5', '1', '0-0' ]
-
-	if (result => 0 && result < pos.length)
-		return pos[result]
-	// ? log error ?
-	return '-'
-}
-
 // ************************************************************
 
 
@@ -438,47 +358,6 @@ class Controller {
 		catch(error) {
 			;
 		}
-		this.loadFromCookie()
-	}
-
-	loadFromCookie() {
-		try {
-			let cookie_data = this.data.cookieStorage.loadAll('trndata')
-			if (cookie_data !== null) {
-				let data = {}
-				// remap 'ratings' to 'Elo'
-				data.players = cookie_data.players.map(p => { 
-					return {'name' : p.name, 'Elo' : p.rating} })
-
-				this.data.generatePairingsForCookieLoad(data.players.length)
-
-				// recreate results
-				data.rounds = this.data.rounds
-
-				let idx = 0
-				data.rounds.forEach((round, round_i) => {
-					round.forEach((resultRecord, rec_i) => {
-						data.rounds[round_i][rec_i].result =
-							result_from_save_id(cookie_data.results[idx])
-						idx++
-					})
-				})
-
-				// recreate tournament inf
-				data.tournamentInfo = this.data.createTournamentInfo()
-
-				data.tournamentInfo = cookie_data.tournamentInfo
-
-				this._loadAllPart2(data)
-			}
-		}
-		catch(e) {
-			console.log(e)
-		}
-	}
-
-	saveToCookie() {
-		this.data.saveToCookie()
 	}
 
 	setCookie(tournament_id) {
@@ -509,7 +388,6 @@ class Controller {
 
 		this.setCookie("")
 		this.unlockWidgets()
-		this.saveToCookie()
 	}
 
 	unlockWidgets() {
@@ -579,8 +457,6 @@ class Controller {
 
 		// Make round 1 active tab
 		this.openRound(1);
-
-		this.saveToCookie()
 	}
 
 	openRound(roundNumber) {
@@ -751,7 +627,6 @@ class Controller {
 			//set the first round as active
 			this.openRound(1);            
 		}
-		this.saveToCookie()
 	}
 
 	// ************************************************************
@@ -1136,13 +1011,11 @@ class Controller {
 		this.lockAndPairing();
 
 		this.generateTestResults();
-		this.saveToCookie()
 
 		this.openTab('tab3');
 	}
 }
 
-window.Controller = Controller
-window.Tournament = Tournament
+
 
 

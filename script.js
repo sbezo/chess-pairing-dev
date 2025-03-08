@@ -1140,6 +1140,11 @@ class Controller {
 
 		this.openTab('tab3');
 	}
+
+	sendFeedback() {
+		let feedback_text = document.getElementById("feedback").value;
+		Console.log(feedback_text)
+	}
 }
 
 window.Controller = Controller

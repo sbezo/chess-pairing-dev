@@ -1142,11 +1142,9 @@ class Controller {
 	}
 
 	async sendFeedback() {
-		let feedback_text = document.getElementById("feedback").value;
-		console.log(feedback_text);
+		const feedback_text = sanitizeInput(document.getElementById("feedback").value);
 		const myHeaders = new Headers();
-    	myHeaders.append("Content-Type", "application/json");
-		
+    	myHeaders.append("Content-Type", "application/json");		
     	const raw = JSON.stringify({
     	  "message": feedback_text
     	});
@@ -1157,16 +1155,18 @@ class Controller {
     	  body: raw,
     	  redirect: "follow"
     	};
-
-    	console.log(raw)
 	
     	fetch("https://p11gt3fasc.execute-api.eu-central-1.amazonaws.com/default/Handle_CP_feddback", requestOptions)
     	  .then((response) => response.text())
     	  .then((result) => console.log(result))
     	  .catch((error) => console.error(error));
+		
+		document.getElementById("feedback").value = "Thank You.";
 	}
+}
 
-
+function sanitizeInput(input) {
+    return input.replace(/[^a-zA-Z0-9 .,!?]/g, '');
 }
 
 window.Controller = Controller

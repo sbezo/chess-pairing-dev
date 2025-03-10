@@ -1166,7 +1166,7 @@ class Controller {
 }
 
 function sanitizeInput(input) {
-    return input.replace(/[^a-zA-Z0-9À-ž .,!?]/g, '');
+    return input.replace(/[^a-zA-Z0-9À-ž .,:;!?'\n\r\[\](){}-]/g, '');
 }
 
 window.Controller = Controller

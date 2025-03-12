@@ -78,8 +78,9 @@ class Tournament {
 				})
 			})
 			data.tournamentInfo = this.tournamentInfo
-
-			this.cookieStorage.saveAll('trndata', data)
+			if(CookieConsent.acceptedCategory('Tournament')){
+				this.cookieStorage.saveAll('trndata', data)
+			}
 		}
 		catch(e) {
 			console.log(e)
@@ -482,7 +483,9 @@ class Controller {
 	}
 
 	setCookie(tournament_id) {
-		document.cookie= `${Controller.COOKIE_ID}${tournament_id}; max-age=999999;` 
+		if(CookieConsent.acceptedCategory('Tournament')){
+			document.cookie= `${Controller.COOKIE_ID}${tournament_id}; max-age=999999;`
+		}
 	}
 
 	newTournament(confirmed = false) {

@@ -30,6 +30,9 @@ CookieConsent.run({
         Tournament: {
             enabled: true
         },
+		GoogleAnalytics: {
+			enabled: true
+		},
 
     },
 	// https://cookieconsent.orestbida.com/advanced/callbacks-events.html
@@ -44,6 +47,17 @@ CookieConsent.run({
 
 			// this is needed if app was used before this feature was added
 			CookieConsent.eraseCookies(["tournament-id", "trndata"])
+			CookieConsent.eraseCookies(["_ga", "_ga_EJYEDDTHWX"])
+			try {
+				  gtag('consent', 'update', {
+						'ad_user_data': 'denied',
+						'ad_personalization': 'denied',
+						'ad_storage': 'denied',
+						'analytics_storage': 'denied'
+				 });
+			}
+			catch(e) {
+			}
 		}
 		else if (preferences.acceptType === 'custom') {
 			// Now, this is not triggered, but if more possibilities will be added,
@@ -52,9 +66,24 @@ CookieConsent.run({
 			// initial cookie question box'
 
 			// this is needed if app was used before this feature was added
-            if(CookieConsent.acceptedCategory('Tournament')) {
+            if (CookieConsent.acceptedCategory('Tournament')) {
             } else {
 				CookieConsent.eraseCookies(["tournament-id", "trndata"])
+            }
+
+            if (CookieConsent.acceptedCategory('GoogleAnalytics')) {
+            } else {
+				CookieConsent.eraseCookies(["_ga", "_ga_EJYEDDTHWX"])
+				try {
+					  gtag('consent', 'update', {
+							'ad_user_data': 'denied',
+							'ad_personalization': 'denied',
+							'ad_storage': 'denied',
+							'analytics_storage': 'denied'
+  					 });
+				}
+				catch(e) {
+				}
             }
 		}
     },
@@ -66,6 +95,34 @@ CookieConsent.run({
             if(CookieConsent.acceptedCategory('Tournament')){
             } else {
 				CookieConsent.eraseCookies(["tournament-id", "trndata"])
+            }
+        }
+        if(changedCategories.includes('GoogleAnalytics')){
+
+            if(CookieConsent.acceptedCategory('GoogleAnalytics')){
+				try {
+					  gtag('consent', 'update', {
+							'ad_user_data': 'granted',
+							'ad_personalization': 'granted',
+							'ad_storage': 'granted',
+							'analytics_storage': 'granted'
+  					 });
+				}
+				catch(e) {
+				}
+            } else {
+				CookieConsent.eraseCookies(["_ga", "_ga_EJYEDDTHWX"])
+
+				try {
+					  gtag('consent', 'update', {
+							'ad_user_data': 'denied',
+							'ad_personalization': 'denied',
+							'ad_storage': 'denied',
+							'analytics_storage': 'denied'
+  					 });
+				}
+				catch(e) {
+				}
             }
         }
     },
@@ -94,8 +151,12 @@ CookieConsent.run({
                             description: "You can allow storing your Tournament data in your Browser's Cookie"
                         },
                         {
-                            title: "Tournament Cookie",
+                            title: "Tournament Data Cookie",
                             linkedCategory: "Tournament"
+                        },
+                        {
+                            title: "Google Analytics Cookies",
+                            linkedCategory: "GoogleAnalytics"
                         },
                         {
                             title: "Information",

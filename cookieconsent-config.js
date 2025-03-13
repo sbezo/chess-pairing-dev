@@ -36,7 +36,7 @@ CookieConsent.run({
 	onFirstConsent: ({cookie}) => {
 		const preferences = CookieConsent.getUserPreferences();
 
-		if (prefeorences.acceptType === 'all') {
+		if (preferences.acceptType === 'all') {
 		}
 		else if (preferences.acceptType === 'necessary') {
 			// after reject or 'setting Tournament to off and save prefs on 

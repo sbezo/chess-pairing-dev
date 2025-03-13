@@ -99,7 +99,7 @@ CookieConsent.run({
                         },
                         {
                             title: "Information",
-                            description: "Some necessary Cookies are still needed to remember your choice."
+                            description: "Some necessary Cookies are still needed to remember your choice. This site is also monitored by Google Analytics."
                         },
 
                     ]

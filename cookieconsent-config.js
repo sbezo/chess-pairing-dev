@@ -36,13 +36,11 @@ CookieConsent.run({
 	onFirstConsent: ({cookie}) => {
 		const preferences = CookieConsent.getUserPreferences();
 
-		if (preferences.acceptType === 'all') {
-			console.log("cc: all accepted");
+		if (prefeorences.acceptType === 'all') {
 		}
 		else if (preferences.acceptType === 'necessary') {
 			// after reject or 'setting Tournament to off and save prefs on 
 			// initial cookie question box'
-			console.log("cc: in necessary: (means rejected)")
 
 			// this is needed if app was used before this feature was added
 			CookieConsent.eraseCookies(["tournament-id", "trndata"])
@@ -52,19 +50,13 @@ CookieConsent.run({
 			// this part must be updated.
 			// Triggers after reject or 'setting Tournament to off and save prefs on 
 			// initial cookie question box'
-			console.log("cc: in custom")
 
 			// this is needed if app was used before this feature was added
-            if(CookieConsent.acceptedCategory('Tournament')){
-                console.log("accepted" )
+            if(CookieConsent.acceptedCategory('Tournament')) {
             } else {
 				CookieConsent.eraseCookies(["tournament-id", "trndata"])
             }
 		}
-
-		//if(preferences.acceptedCategories.includes('analytics')){
-		//	console.log("The analytics category was accepted!");
-		//}
     },
 	// brx: I don't see, when and how use this:
 	//onConsent: ({cookie}) => { ... },
@@ -72,11 +64,8 @@ CookieConsent.run({
         if(changedCategories.includes('Tournament')){
 
             if(CookieConsent.acceptedCategory('Tournament')){
-                console.log("accepted" )
             } else {
 				CookieConsent.eraseCookies(["tournament-id", "trndata"])
-                //deleteCookie("tournament-id")
-                //deleteCookie("trndata")                
             }
         }
     },

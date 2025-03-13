@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-	
+<head>	
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EJYEDDTHWX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-EJYEDDTHWX');
-    </script>
+    </script>   
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,21 +20,28 @@
 		  "./Base64Binary.js": "./modules/Base64Binary.js",
 		  "./BitStream.js": "./modules/BitStream.js",
 		  "./DullSerializer.js": "./modules/DullSerializer.js",
-		  "./CookeisWrapper.js": "./modules/CookiesWrapper.js",
+		  "./CookiesWrapper.js": "./modules/CookiesWrapper.js",
 		  "./modules/FeatPersistentCookie.js": "./modules/FeatPersistentCookie.js" 
 		}
 	  }
 	</script>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">    
 	<script type="module" src="script.js"></script>
 	<script src="berger-fide.js"></script>
+	<script src="utils.js"></script>
 
 	<script>
 	function _on_DOM_content_loaded(event) {
 		window.app = new Controller(new Tournament());
 		app.initialize()
 
-		// app.testAll();
+        if (CookieConsent.acceptedCategory('GoogleAnalytics')) {
+			enableGoogleAnalytics()
+		}
+		else {
+			// Google Analytics code has not been loaded, so no action is needed
+		}
+
 	}
 
 	addEventListener("DOMContentLoaded", _on_DOM_content_loaded);
@@ -152,6 +154,9 @@
 				<option value="6">None</option>
 			</select>
 			</form>
+            <br>
+            <label for="cookieConsentButton">Manage your Cookie Preferencies:</label>
+            <button id="cookieConsentButton" class="btn" type="button" data-cc="show-preferencesModal">Cookie preferences</button> 
         </section>
     </div>
 
@@ -159,7 +164,7 @@
     <div id="tab5" class="tab-content">
         <section id="about">
             <h2>About</h2>
-            <p>Our goal is to provide <strong>the simplest and most user-friendly website</strong> for chess pairing.</p>  
+            <p>Our goal is to provide <strong>the simplest website</strong> for chess pairing.</p>  
             <p>It should be no more complicated than a basic calculator;)</p>
             <br>
             <p>- No Registration</p>
@@ -168,11 +173,14 @@
             <br>
             <h2>Leave Your Feedback</h2>
             <textarea id="feedback" rows="4" cols="50"></textarea><br>
-            <button onclick="app.sendFeedback()">Submit</button>      
+            <button onclick="app.sendFeedback()">Submit</button><br><br>
+               
         </section>
+        <br><br><br>
         <footer>
-            <p><small>Designed & Developed by Stefan Bezo & Juraj Borik, 2025. Repository for this project you can find on <a href="https://github.com/sbezo/chess-pairing" target="_blank">GitHub</a>. Feel free to comment, report issues, ask new features, or just give a star;)</small></p>
+            <p><small>Stefan Bezo &amp; Juraj Borik, 2025. Repository for this project: <a href="https://github.com/sbezo/chess-pairing" target="_blank">GitHub</a>.</small></p>
         </footer>
     </div>
+    <script type="module" src="cookieconsent-config.js"></script>
 </body>
 </html>

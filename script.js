@@ -66,6 +66,9 @@ class Tournament {
 
 	saveToCookie() {
 		try {
+			if(! CookieConsent.acceptedCategory('Tournament')){
+				return
+			}
 			let data = {}
 			let players_copy = this.players.slice()
 			data.players = players_copy.map(p => { 
@@ -78,7 +81,6 @@ class Tournament {
 				})
 			})
 			data.tournamentInfo = this.tournamentInfo
-
 			this.cookieStorage.saveAll('trndata', data)
 		}
 		catch(e) {
@@ -114,7 +116,7 @@ class Tournament {
 
 	setResult(roundIndex, resultRow, result) {
 		if (roundIndex > this.rounds.length || resultRow > this.rounds[roundIndex].length) {
-			throw new Exception("round or row index out of range");
+			throw new Error("round or row index out of range");
 		}
     	this.rounds[roundIndex][resultRow].result = result;
 		this.saveToCookie()
@@ -258,7 +260,6 @@ class Tournament {
 						player1.points += resultToValue(result);
 						player2.points += resultToValue(invertedResult(result));
 						break
-						break
 					default:
 						;
 				}
@@ -343,13 +344,10 @@ function getCriteriumVisibleName(crit) {
 	switch(crit) {
 		case Tournament.MUTUAL_RESULTS_CRIT:
 			return "Mutual results"
-			break
 		case Tournament.SONNEBORG_BERGER_CRIT:
 			return "Berger Score"
-			break
 		case Tournament.WINS_CRIT:
 			return "More Wins"
-			break
 		default:
 			console.error("unknown criterium: '" + crit + "'")
 			return "????"
@@ -383,7 +381,7 @@ function resultToValue(result) {
 		default:
 			console.error("result data can't be used as value now");
 	}
-	throw new Exception("result data can't be used as value now");
+	throw new Error("result data can't be used as value now");
 }
 
 function result_to_save_id(result) {
@@ -404,7 +402,7 @@ function result_to_save_id(result) {
 function result_from_save_id(result) {
 	let pos = [ '-', '0', '0.5', '1', '0-0' ]
 
-	if (result => 0 && result < pos.length)
+	if (result >= 0 && result < pos.length)
 		return pos[result]
 	// ? log error ?
 	return '-'
@@ -443,6 +441,9 @@ class Controller {
 
 	loadFromCookie() {
 		try {
+			if(! CookieConsent.acceptedCategory('Tournament')){
+				return
+			}
 			let cookie_data = this.data.cookieStorage.loadAll('trndata')
 			if (cookie_data !== null) {
 				let data = {}
@@ -473,7 +474,7 @@ class Controller {
 			}
 		}
 		catch(e) {
-			console.log(e)
+			console.log("This is catched exception. This is not error, if cookie for Tournament data was disabled.\n" + e)
 		}
 	}
 
@@ -482,7 +483,9 @@ class Controller {
 	}
 
 	setCookie(tournament_id) {
-		document.cookie= `${Controller.COOKIE_ID}${tournament_id}; max-age=999999;` 
+		if(CookieConsent.acceptedCategory('Tournament')){
+			document.cookie= `${Controller.COOKIE_ID}${tournament_id}; max-age=999999;`
+		}
 	}
 
 	newTournament(confirmed = false) {
@@ -1166,7 +1169,7 @@ class Controller {
 }
 
 function sanitizeInput(input) {
-    return input.replace(/[^a-zA-Z0-9 .,!?]/g, '');
+    return input.replace(/[^a-zA-Z0-9À-ž .,:;!?'\n\r\[\](){}-]/g, '');
 }
 
 window.Controller = Controller

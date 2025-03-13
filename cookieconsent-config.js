@@ -82,6 +82,9 @@ CookieConsent.run({
 
 			// this is needed if app was used before this feature was added
             if (CookieConsent.acceptedCategory('Tournament')) {
+				// TODO: this makes this module depend on main pairing module,
+				// should be refactorized somehow later
+				app.saveToCookie()
             } else {
 				CookieConsent.eraseCookies(["tournament-id", "trndata"])
             }
@@ -98,6 +101,9 @@ CookieConsent.run({
     onChange: ({cookie, changedCategories, changedPreferences}) => {
         if (changedCategories.includes('Tournament')) {
             if(CookieConsent.acceptedCategory('Tournament')) {
+				// TODO: this makes this module depend on main pairing module,
+				// should be refactorized somehow later
+				app.saveToCookie()
             } else {
 				CookieConsent.eraseCookies(["tournament-id", "trndata"])
             }

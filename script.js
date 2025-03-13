@@ -66,6 +66,9 @@ class Tournament {
 
 	saveToCookie() {
 		try {
+			if(! CookieConsent.acceptedCategory('Tournament')){
+				return
+			}
 			let data = {}
 			let players_copy = this.players.slice()
 			data.players = players_copy.map(p => { 
@@ -78,9 +81,7 @@ class Tournament {
 				})
 			})
 			data.tournamentInfo = this.tournamentInfo
-			if(CookieConsent.acceptedCategory('Tournament')){
-				this.cookieStorage.saveAll('trndata', data)
-			}
+			this.cookieStorage.saveAll('trndata', data)
 		}
 		catch(e) {
 			console.log(e)
@@ -440,6 +441,9 @@ class Controller {
 
 	loadFromCookie() {
 		try {
+			if(! CookieConsent.acceptedCategory('Tournament')){
+				return
+			}
 			let cookie_data = this.data.cookieStorage.loadAll('trndata')
 			if (cookie_data !== null) {
 				let data = {}

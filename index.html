@@ -2,15 +2,11 @@
 <html lang="en">
 
 <head>	
-    <!-- Google tag (gtag.js) 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EJYEDDTHWX"></script>
+    <!-- Google tag (gtag.js) -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-EJYEDDTHWX');
-    </script>   -->
+    </script>   
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,11 +28,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">    
 	<script type="module" src="script.js"></script>
 	<script src="berger-fide.js"></script>
+	<script src="utils.js"></script>
 
 	<script>
 	function _on_DOM_content_loaded(event) {
 		window.app = new Controller(new Tournament());
 		app.initialize()
+
+        if (CookieConsent.acceptedCategory('GoogleAnalytics')) {
+			enableGoogleAnalytics()
+		}
+		else {
+			// Google Analytics code has not been loaded, so no action is needed
+		}
+
 	}
 
 	addEventListener("DOMContentLoaded", _on_DOM_content_loaded);

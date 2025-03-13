@@ -3,13 +3,8 @@ import 'https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookiecon
 // Enable dark mode
 document.documentElement.classList.add('cc--darkmode');
 
-function deleteCookie(name) {
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/chess-pairing-dev;';
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/chess-pairing;';
-
-}
-
+// not really global, when this code is loaded as module,
+// it is 'global' in scope of this module
 let global_IsGoogleAnalyticsLoaded = false
 
 function setGoogleAnalytics(value) {
@@ -160,5 +155,6 @@ CookieConsent.run({
     }
 });
 
+// HACK: make it global
 window.enableGoogleAnalytics = enableGoogleAnalytics
 window.disableGoogleAnalytics = disableGoogleAnalytics

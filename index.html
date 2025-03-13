@@ -35,16 +35,11 @@
 		window.app = new Controller(new Tournament());
 		app.initialize()
 
-		//const preferences = CookieConsent.getUserPreferences();
         if (CookieConsent.acceptedCategory('GoogleAnalytics')) {
-			console.log("Google analytics enabled")
-			loadScript("https://www.googletagmanager.com/gtag/js?id=G-EJYEDDTHWX")
-      		gtag('js', new Date()); 
-		    gtag('config', 'G-EJYEDDTHWX');
-			console.log("Google analytics loaded")
+			enableGoogleAnalytics()
 		}
 		else {
-			console.log("Google analytics disabled")
+			// Google Analytics code has not been loaded, so no action is needed
 		}
 
 	}

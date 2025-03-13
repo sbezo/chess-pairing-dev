@@ -10,6 +10,36 @@ function deleteCookie(name) {
 
 }
 
+let global_IsGoogleAnalyticsLoaded = false
+
+function setGoogleAnalytics(value) {
+	try {
+		  gtag('consent', 'update', {
+				'ad_user_data': value,
+				'ad_personalization': value,
+				'ad_storage': value,
+				'analytics_storage': value
+		 });
+	}
+	catch(e) {
+	}
+}
+
+export function enableGoogleAnalytics() {
+	if (!global_IsGoogleAnalyticsLoaded) {	
+		loadScript("https://www.googletagmanager.com/gtag/js?id=G-EJYEDDTHWX")
+		gtag('js', new Date()); 
+		gtag('config', 'G-EJYEDDTHWX');
+		global_IsGoogleAnalyticsLoaded = true
+	}
+	setGoogleAnalytics('granted')
+}
+
+export function disableGoogleAnalytics() {
+	CookieConsent.eraseCookies(["_ga", "_ga_EJYEDDTHWX"])
+	setGoogleAnalytics('denied')
+}
+
 // https://github.com/orestbida/cookieconsent
 CookieConsent.run({
     guiOptions: {
@@ -47,17 +77,7 @@ CookieConsent.run({
 
 			// this is needed if app was used before this feature was added
 			CookieConsent.eraseCookies(["tournament-id", "trndata"])
-			CookieConsent.eraseCookies(["_ga", "_ga_EJYEDDTHWX"])
-			try {
-				  gtag('consent', 'update', {
-						'ad_user_data': 'denied',
-						'ad_personalization': 'denied',
-						'ad_storage': 'denied',
-						'analytics_storage': 'denied'
-				 });
-			}
-			catch(e) {
-			}
+			disableGoogleAnalytics()
 		}
 		else if (preferences.acceptType === 'custom') {
 			// Now, this is not triggered, but if more possibilities will be added,
@@ -72,57 +92,27 @@ CookieConsent.run({
             }
 
             if (CookieConsent.acceptedCategory('GoogleAnalytics')) {
+				enableGoogleAnalytics()
             } else {
-				CookieConsent.eraseCookies(["_ga", "_ga_EJYEDDTHWX"])
-				try {
-					  gtag('consent', 'update', {
-							'ad_user_data': 'denied',
-							'ad_personalization': 'denied',
-							'ad_storage': 'denied',
-							'analytics_storage': 'denied'
-  					 });
-				}
-				catch(e) {
-				}
+				disableGoogleAnalytics()
             }
 		}
     },
 	// brx: I don't see, when and how use this:
 	//onConsent: ({cookie}) => { ... },
     onChange: ({cookie, changedCategories, changedPreferences}) => {
-        if(changedCategories.includes('Tournament')){
-
-            if(CookieConsent.acceptedCategory('Tournament')){
+        if (changedCategories.includes('Tournament')) {
+            if(CookieConsent.acceptedCategory('Tournament')) {
             } else {
 				CookieConsent.eraseCookies(["tournament-id", "trndata"])
             }
         }
-        if(changedCategories.includes('GoogleAnalytics')){
 
-            if(CookieConsent.acceptedCategory('GoogleAnalytics')){
-				try {
-					  gtag('consent', 'update', {
-							'ad_user_data': 'granted',
-							'ad_personalization': 'granted',
-							'ad_storage': 'granted',
-							'analytics_storage': 'granted'
-  					 });
-				}
-				catch(e) {
-				}
+        if (changedCategories.includes('GoogleAnalytics')) {
+            if (CookieConsent.acceptedCategory('GoogleAnalytics')) {
+				enableGoogleAnalytics()
             } else {
-				CookieConsent.eraseCookies(["_ga", "_ga_EJYEDDTHWX"])
-
-				try {
-					  gtag('consent', 'update', {
-							'ad_user_data': 'denied',
-							'ad_personalization': 'denied',
-							'ad_storage': 'denied',
-							'analytics_storage': 'denied'
-  					 });
-				}
-				catch(e) {
-				}
+				disableGoogleAnalytics()
             }
         }
     },
@@ -169,3 +159,6 @@ CookieConsent.run({
         }
     }
 });
+
+window.enableGoogleAnalytics = enableGoogleAnalytics
+window.disableGoogleAnalytics = disableGoogleAnalytics

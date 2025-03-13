@@ -474,7 +474,7 @@ class Controller {
 			}
 		}
 		catch(e) {
-			console.log(e)
+			console.log("This is catched exception. This is not error, if cookie for Tournament data was disabled.\n" + e)
 		}
 	}
 

@@ -451,7 +451,9 @@ class Controller {
 				data.players = cookie_data.players.map(p => { 
 					return {'name' : p.name, 'Elo' : p.rating} })
 
-				this.data.generatePairingsForCookieLoad(data.players.length)
+				if (cookie_data.results.length) {
+					this.data.generatePairingsForCookieLoad(data.players.length)
+				}
 
 				// recreate results
 				data.rounds = this.data.rounds
@@ -745,14 +747,21 @@ class Controller {
 			}
 		}
 
-		this.openTab('tab2')
 		if (found) {
 			// open round tab with missing result
+			this.openTab('tab2')
 			this.openRound(r+1);            
 		}
 		else {
-			//set the first round as active
-			this.openRound(1);            
+			if (this.data.rounds.length) {
+				//set the first round as active
+				this.openTab('tab2')
+				this.openRound(1);            
+			}
+			else {
+				// pairing has not been generated yet
+				this.openTab("tab1")
+			}
 		}
 		this.saveToCookie()
 	}
